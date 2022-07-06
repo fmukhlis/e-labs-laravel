@@ -1,0 +1,150 @@
+body.default-body {
+    background-color: whitesmoke;
+}
+
+/* Main Menu */
+div.card img.card-img,
+div.card-img-overlay {
+    padding: 20px;
+}
+
+div.card-img-overlay {
+    padding: 0;
+    padding-top: 40%;
+    background: rgba(0, 0, 0, 0.75);
+    opacity: 0;
+    transition: 0.3s;
+}
+
+a.main-feature:hover div.card-img-overlay {
+    opacity: 1;
+}
+/* Main Menu */
+
+/* Pendaftaran */
+section#pendaftaran-menu {
+    font-size: 90%;
+}
+section#pendaftaran-menu tbody tr td {
+    font-size: 95%;
+    padding: 5px;
+}
+
+section#pendaftaran-menu table {
+    table-layout: fixed;
+    word-wrap: break-word;
+}
+/* Pendaftaran */
+
+/* Sub Menu */
+section#sub-menu a img {
+    width: 40px;
+}
+/* Sub Menu */
+
+/* Navbar */
+nav.navbar span.navbar-text {
+    color: white;
+}
+nav.navbar a.navbar-brand {
+    color: lightgrey;
+}
+
+a.navbar-brand img {
+    width: 30px;
+}
+
+a.nav-link {
+    font-size: 85%;
+}
+
+a.nav-link img {
+    width: 30px;
+    margin-left: 10px;
+    font-size: 10px;
+}
+/* Navbar */
+
+/* Side Navbar */
+div.offcanvas h5.offcanvas-title img {
+    width: 30px;
+    vertical-align: top;
+}
+
+div.offcanvas-header {
+    padding-bottom: 5px;
+}
+
+div.offcanvas-body {
+    padding-top: 0;
+}
+
+div.offcanvas {
+    color: white;
+}
+
+div.offcanvas-body ul li img {
+    width: 20px;
+}
+/* Side Navbar */
+
+/* Sub Navbar */
+nav.sub-nav {
+    border-top: 1px solid lightgrey;
+    height: 55px;
+}
+
+nav.sub-nav a.active {
+    border-bottom: 3px solid white;
+    margin-bottom: -9px;
+    font-weight: bold;
+}
+
+nav.sub-nav ul.dropdown-menu {
+    margin-top: 10px;
+    padding: 0;
+}
+
+nav.sub-nav div.btn-hide-nav,
+nav.sub-nav div.btn-show-nav,
+nav.sub-nav div.btn-refresh,
+nav.sub-nav div.btn-clear-filter,
+nav.sub-nav div.btn-reset,
+nav.sub-nav form input,
+nav.sub-nav form button,
+nav.sub-nav span.navbar-text,
+nav.sub-nav a.btn {
+    font-size: 85%;
+}
+
+div.container-fluid.hideable {
+    /* position: absolute; */
+    padding: 0;
+}
+
+a.btn-dropdown-sort {
+    min-width: 70px;
+}
+/* Sub Navbar */
+
+/* Filter Modal */
+div.modal div.modal-body span.text-danger {
+    font-size: 75%;
+}
+/* Filter Modal */
+
+/* Order Pemeriksaan */
+div#extra-1 div.card {
+    z-index: 1;
+    min-width: 261px;
+}
+
+div#select-doc-1 div.card {
+    z-index: 1;
+    min-width: 342px;
+}
+div#select-doc-1 div.card div.row p:hover{
+    background-color: whitesmoke;
+    font-weight: bold;
+}
+/* Order Pemeriksaan */
