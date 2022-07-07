@@ -7,60 +7,48 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## About Laravel
+## About E-Labs.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+E-Labs. adalah sebuah aplikasi sistem informasi laboratorium berbasis web yang dibangun menggunakan framework laravel sebagai back-endnya dan framework bootstrap sebagai front-endnya. Dan pengembang berharap kedepannya juga akan menggunakan framework Vue juga. Berikut fitur-fitur E-Labs.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+-   [Pendaftaran].
+-   [Ambil Sampel].
+-   [Terima Sampel]
+-   [Proses Sampel].
+-   [Input Hasil].
+-   [Validasi Hasil].
+-   [Cetak Hasil].
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Pendaftaran
 
-## Learning Laravel
+Halaman utama pada menu pendaftaran adalah tabel yang berisikan daftar pemeriksaan yang pernah dibuat. Data dalam tabel dapat diurutkan sesuai kebutuhan dan juga terdapat beberapa filter yang bisa digunakan, seperti nama pasien, nama dokter, tanggal pemeriksaan, dan jenis kelamin.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Di halaman ini, terdapat menu lain dimana user dapat membuat order pemeriksaan untuk pasien tertentu. Jika data pasien belum ada maka pengguna harus mengisi data pasien secara manual, namun jika data pasien sudah pernah dibuat, maka pengguna cukup memilih pasien tersebut dan data pasien akan otomatis terisi. Setelah data terisi jangan lupa untuk mengklik tombol 'Add Data' untuk menambahkannya ke daftar pemeriksaan.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Masih di halaman ini, langkah selanjutnya setelah menambahkan pasien ke daftar pemeriksaan, user harus mengisikan data pemeriksaan yang akan dijalani pasien, siapa dokter pengirimnya, dan bagaimana pembayaran akan dilakukan. Caranya cukup dengan mengklik 'Select' pada pasien yang bersangkutan di tabel pemeriksaan.
 
-## Laravel Sponsors
+Setelah mengisi semua data yang dibutuhkan, jangan lupa untuk klik tombol 'Bayar' di sub halaman pembayaran, kemudian klik tombol 'Done' untuk kembali ke halaman utama pada menu pendaftaran.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+## Ambil Sampel
 
-### Premium Partners
+On progress...
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[CMS Max](https://www.cmsmax.com/)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
-- **[Romega Software](https://romegasoftware.com)**
+## Terima Sampel
 
-## Contributing
+On progress...
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Proses Sampel
 
-## Code of Conduct
+On progress...
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Input Hasil
 
-## Security Vulnerabilities
+On progress...
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Validasi Hasil
 
-## License
+On progress...
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Cetak Hasil
+
+On progress...
