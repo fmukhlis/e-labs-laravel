@@ -147,4 +147,7 @@ div#select-doc-1 div.card div.row p:hover{
     background-color: whitesmoke;
     font-weight: bold;
 }
+div.gap-registrasi{
+    margin-bottom: 0.875rem !important;
+}
 /* Order Pemeriksaan */

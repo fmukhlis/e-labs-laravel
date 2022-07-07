@@ -8,24 +8,24 @@
             <div class="row">
                 <label for="nolab" class="col-1 col-form-label">No. Lab.</label>
                 <div class="col-2">
-                    <input type="text" class="form-control @error('nolab') is-invalid @enderror" id="nolab" name="nolab"
-                        value="{{ old('nolab', $test_data->no_lab) }}" required readonly>
+                    <input type="text" class="form-control @error('nolab') is-invalid @enderror" id="nolab"
+                        name="nolab" value="{{ old('nolab', $test_data->no_lab) }}" required readonly>
                     @error('nolab')
                         <div class="invalid-feedback">No. Lab tidak valid</div>
                     @enderror
                 </div>
                 <label for="norm" class="col-1 col-form-label">No. RM</label>
                 <div class="col-3">
-                    <input type="text" class="form-control @error('norm') is-invalid @enderror" id="norm" name="norm"
-                        value="{{ old('norm', $test_data->pasien->no_rm) }}" required readonly>
+                    <input type="text" class="form-control @error('norm') is-invalid @enderror" id="norm"
+                        name="norm" value="{{ old('norm', $test_data->pasien->no_rm) }}" required readonly>
                     @error('norm')
                         <div class="invalid-feedback">No. RM tidak valid</div>
                     @enderror
                 </div>
                 <label for="noktp" class="col-1 offset-1 col-form-label">No. KTP</label>
                 <div class="col-3">
-                    <input type="text" class="form-control @error('noktp') is-invalid @enderror" id="noktp" name="noktp"
-                        value="{{ old('noktp', $test_data->pasien->no_ktp) }}" required>
+                    <input type="text" class="form-control @error('noktp') is-invalid @enderror" id="noktp"
+                        name="noktp" value="{{ old('noktp', $test_data->pasien->no_ktp) }}" required>
                     <div class="valid-feedback"></div>
                     @error('noktp')
                         <div class="invalid-feedback">No. KTP tidak valid</div>
@@ -214,6 +214,39 @@
         <div class="col-6">
             <div class="container">
                 <div class="row g-3">
+                    <div class="col-4">
+                        <div class="row">
+                            <div class="col-12 pt-4">
+                                <img src="{{ asset('assets/def_profile_pict.jpg') }}" class="img-thumbnail"
+                                    alt="...">
+                            </div>
+                            <div class="col-12">
+                                <div class="btn btn-primary btn-order-photo col-12">
+                                    Add Photo
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-7 offset-1 gap-registrasi">
+                        <div class="row g-2">
+                            <div class="col-12">
+                                <label for="pangkatgolongan" class="form-label">Pangkat / Golongan</label>
+                                <input type="text" class="form-control" id="pangkatgolongan"
+                                    name="pangkatgolongan"
+                                    value="{{ old('pangkatgolongan', $test_data->pasien->pangkat_gol) }}">
+                            </div>
+                            <div class="col-12">
+                                <label for="kesatuan" class="form-label">Kesatuan</label>
+                                <input type="text" class="form-control" id="kesatuan" name="kesatuan"
+                                    value="{{ old('kesatuan', $test_data->pasien->kesatuan) }}">
+                            </div>
+                            <div class="col-12">
+                                <label for="nrp" class="form-label">NRP</label>
+                                <input type="text" class="form-control" id="nrp" name="nrp"
+                                    value="{{ old('nrp', $test_data->pasien->nrp) }}">
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-12">
                         <label for="alamatpasien" class="form-label">Alamat Pasien</label>
                         <div class="row g-2">
@@ -307,46 +340,9 @@
                                     placeholder="Kode Pos">
                             </div>
                             <div class="col-12">
-                                <textarea class="form-control mb-3 @error('detailalamat') is-invalid @enderror" id="detailalamat" name="detailalamat"
-                                    rows="3" placeholder="Detail Alamat"
-                                    required>{{ old('detailalamat', $test_data->pasien->alamat_detail) }}</textarea>
+                                <textarea class="form-control @error('detailalamat') is-invalid @enderror" id="detailalamat" name="detailalamat"
+                                    rows="3" placeholder="Detail Alamat" required>{{ old('detailalamat', $test_data->pasien->alamat_detail) }}</textarea>
                                 <div class="invalid-feedback">Alamat harus diisi</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <label for="pangkatgolongan" class="form-label">Pangkat / Golongan</label>
-                        <input type="text" class="form-control" id="pangkatgolongan" name="pangkatgolongan"
-                            value="{{ old('pangkatgolongan', $test_data->pasien->pangkat_gol) }}">
-                    </div>
-                    <div class="col-4">
-                        <label for="kesatuan" class="form-label">Kesatuan</label>
-                        <input type="text" class="form-control" id="kesatuan" name="kesatuan"
-                            value="{{ old('kesatuan', $test_data->pasien->kesatuan) }}">
-                    </div>
-                    <div class="col-4">
-                        <label for="nrp" class="form-label">NRP</label>
-                        <input type="text" class="form-control" id="nrp" name="nrp"
-                            value="{{ old('nrp', $test_data->pasien->nrp) }}">
-                    </div>
-                    <div class="col-12">
-                        <label for="nohp" class="form-label">Kontak Pasien</label>
-                        <div class="row g-1">
-                            <div class="col-4">
-                                <input type="text" class="form-control" id="nohp" name="nohp"
-                                    value="{{ old('nohp', $test_data->pasien->no_hp) }}" placeholder="No. HP">
-                            </div>
-                            <div class="col-4">
-                                <input type="text" class="form-control" id="notelp" name="notelp"
-                                    value="{{ old('notelp', $test_data->pasien->no_telp) }}" placeholder="No. Telp.">
-                            </div>
-                            <div class="col-4">
-                                <input type="text" class="form-control" id="fax" name="fax"
-                                    value="{{ old('fax', $test_data->pasien->fax) }}" placeholder="Fax">
-                            </div>
-                            <div class="col-12">
-                                <input type="text" class="form-control" id="email" name="email"
-                                    value="{{ old('email', $test_data->pasien->email) }}" placeholder="Email">
                             </div>
                         </div>
                     </div>
@@ -354,9 +350,34 @@
             </div>
         </div>
         {{-- --- --}}
-    </div>
-    {{-- EndRow2 --}}
 
+        {{-- --- --}}
+        <div>
+            <div class="col-12 mt-4 gap-registrasi">
+                <div class="container">
+                    <div class="row g-2">
+                        <div class="col-3">
+                            <input type="text" class="form-control" id="nohp" name="nohp"
+                                value="{{ old('nohp', $test_data->pasien->no_hp) }}" placeholder="No. HP">
+                        </div>
+                        <div class="col-3">
+                            <input type="text" class="form-control" id="notelp" name="notelp"
+                                value="{{ old('notelp', $test_data->pasien->no_telp) }}" placeholder="No. Telp.">
+                        </div>
+                        <div class="col-3">
+                            <input type="text" class="form-control" id="fax" name="fax"
+                                value="{{ old('fax', $test_data->pasien->fax) }}" placeholder="Fax">
+                        </div>
+                        <div class="col-3">
+                            <input type="text" class="form-control" id="email" name="email"
+                                value="{{ old('email', $test_data->pasien->email) }}" placeholder="Email">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{-- --- --}}
+    </div>
 
 
     <div class="row bg-light pt-2 pb-1 justify-content-center">
@@ -367,10 +388,7 @@
         <div class="col-3 text-start">
         </div>
         <div class="col-6 text-center">
-            <div class="btn btn-outline-primary btn-order-photo">
-                Update Photo
-            </div>
-            <button id="btn-order-save" type="submit" class="btn btn-success">
+            <button id="btn-order-save" type="submit" class="btn btn-success col-3">
                 Update
             </button>
         </div>
