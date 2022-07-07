@@ -96,6 +96,17 @@ $(document).ready(function() {
                 document.querySelector('#patient-list').classList.add('d-none');
             }
         });
+
+        // Event untuk pilih foto profil
+        document.querySelector('div.btn-order-photo').addEventListener('click', function(){
+            document.querySelector('input#fotopasien').click();
+        });
+        document.querySelector('input#fotopasien').addEventListener('change', function(e){
+            document.querySelector('img#fotothumbnailpasien').src = URL.createObjectURL(e.target.files[0]);
+            document.querySelector('img#fotothumbnailpasien').onload = function() {
+                URL.revokeObjectURL(document.querySelector('img#fotothumbnailpasien').src) // Free memory
+              }
+        })
     // End
 
 

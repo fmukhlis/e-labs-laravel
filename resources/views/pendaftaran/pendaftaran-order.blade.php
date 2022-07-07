@@ -26,10 +26,11 @@
             <div class="container mt-4">
                 @if (session('status'))
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+                        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img"
+                            aria-label="Success:">
                             <use xlink:href="#check-circle-fill" />
                         </svg>
-                        <b>[ {{ $current_date }} ]</b> : ( {{ $test_data->no_lab }} ) Data pemeriksaan pasien
+                        <b>[ {{ $current_date }} ]</b> : Data pasien
                         <b>{{ $test_data->pasien->nama }}</b> berhasil diupdate !
                         <button type="button" class="btn-close" id="auto-cls" data-bs-dismiss="alert"
                             aria-label="Close"></button>
@@ -87,6 +88,7 @@
         </div>
 
         <input id="pagenum" type="hidden" value="1">
+        <input id="fotopasien" name="fotopasien" type="file" class="d-none">
     </section>
     <!-- End of Order Page -->
 @endsection

@@ -217,8 +217,8 @@
                     <div class="col-4">
                         <div class="row">
                             <div class="col-12 pt-4">
-                                <img src="{{ asset('assets/def_profile_pict.jpg') }}" class="img-thumbnail"
-                                    alt="...">
+                                <img src="{{ asset('assets/def_profile_pict.jpg') }}" id="fotothumbnailpasien"
+                                    class="img-thumbnail" alt="Foto Pasien">
                             </div>
                             <div class="col-12">
                                 <div class="btn btn-primary btn-order-photo col-12">
