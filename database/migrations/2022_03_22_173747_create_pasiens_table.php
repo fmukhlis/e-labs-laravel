@@ -24,6 +24,7 @@ class CreatePasiensTable extends Migration
             $table->text('alamat_detail');
             $table->timestamps();
 
+            $table->string('foto_pasien')->nullable();
             $table->string('agama')->nullable();
             $table->string('status')->nullable();
             $table->string('pendidikan')->nullable();

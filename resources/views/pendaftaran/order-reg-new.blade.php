@@ -1,4 +1,4 @@
-<form action="/pendaftaran/order" method="post">
+<form action="/pendaftaran/order" method="post" enctype="multipart/form-data">
     @csrf
     {{-- Row1 --}}
     <div class="row bg-light">
@@ -351,12 +351,22 @@
                 <div class="col-4">
                     <div class="row">
                         <div class="col-12 pt-4">
-                            <img src="{{ asset('assets/def_profile_pict.jpg') }}" class="img-thumbnail"
-                                alt="...">
+                            @if (session('selected_patient'))
+                                @if (session('selected_patient')['foto_pasien'])
+                                    <img src="{{ asset('storage/' . session('selected_patient')['foto_pasien']) }}"
+                                        id="fotothumbnailpasien" class="img-thumbnail" alt="Foto Pasien">
+                                @else
+                                    <img src="{{ asset('assets/def_profile_pict.jpg') }}" id="fotothumbnailpasien"
+                                        class="img-thumbnail" alt="Foto Pasien">
+                                @endif
+                            @else
+                                <img src="{{ asset('assets/def_profile_pict.jpg') }}" id="fotothumbnailpasien"
+                                    class="img-thumbnail" alt="Foto Pasien">
+                            @endif
                         </div>
                         <div class="col-12">
                             <div class="btn btn-primary btn-order-photo col-12">
-                                Add Photo
+                                Change Photo
                             </div>
                         </div>
                     </div>
@@ -524,7 +534,7 @@
     {{-- --- --}}
     </div>
 
-
+    <input id="fotopasien" name="fotopasien" type="file" class="d-none">
 
     <div class="row bg-light pt-2 pb-1 justify-content-center">
         <hr class="pt-1">

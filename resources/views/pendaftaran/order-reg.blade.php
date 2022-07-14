@@ -1,4 +1,4 @@
-<form action="/pendaftaran/{{ $test_data->no_lab }}/order" method="post">
+<form action="/pendaftaran/{{ $test_data->no_lab }}/order" method="post" enctype="multipart/form-data">
     @method('put')
     @csrf
     {{-- Row1 --}}
@@ -217,12 +217,17 @@
                     <div class="col-4">
                         <div class="row">
                             <div class="col-12 pt-4">
-                                <img src="{{ asset('assets/def_profile_pict.jpg') }}" id="fotothumbnailpasien"
-                                    class="img-thumbnail" alt="Foto Pasien">
+                                @if ($test_data->pasien->foto_pasien)
+                                    <img src="{{ asset('storage/' . $test_data->pasien->foto_pasien) }}"
+                                        id="fotothumbnailpasien" class="img-thumbnail" alt="Foto Pasien">
+                                @else
+                                    <img src="{{ asset('assets/def_profile_pict.jpg') }}" id="fotothumbnailpasien"
+                                        class="img-thumbnail" alt="Foto Pasien">
+                                @endif
                             </div>
                             <div class="col-12">
                                 <div class="btn btn-primary btn-order-photo col-12">
-                                    Add Photo
+                                    Change Photo
                                 </div>
                             </div>
                         </div>
@@ -379,6 +384,7 @@
         {{-- --- --}}
     </div>
 
+    <input id="fotopasien" name="fotopasien" type="file" class="d-none">
 
     <div class="row bg-light pt-2 pb-1 justify-content-center">
         <hr class="pt-1">

@@ -112,9 +112,12 @@ $(document).ready(function() {
 
 
     // Inisialisasi Metode Bayar
-    if(document.querySelector('#metodebayar').value != 'BPJS'){
-        document.querySelector('#nosep').readOnly = true;
+    if(document.querySelector('#metodebayar')){
+        if(document.querySelector('#metodebayar').value != 'BPJS'){
+            document.querySelector('#nosep').readOnly = true;
+        }
     }
+
     // End
 
 

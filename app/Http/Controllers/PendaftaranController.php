@@ -19,6 +19,7 @@ use Illuminate\Support\Str;
 use Mockery\Generator\StringManipulation\Pass\Pass;
 use SebastianBergmann\Environment\Console;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class PendaftaranController extends Controller
 {
@@ -74,10 +75,13 @@ class PendaftaranController extends Controller
             'namapasien' => ['required'],
             'tempatlahir' => ['required'],
             'jeniskelamin' => ['required'],
+            'fotopasien' => ['image', 'file', 'max:1024'],
             'detailalamat' => ['required']
         ]);
 
         if (!Pasien::where('no_rm', '=', $validatedData['norm'])->get()->count()) {
+            if ($request->file('fotopasien')) $validatedData['fotopasien'] = $request->file('fotopasien')->store('profilePhoto');
+            else $validatedData['fotopasien'] = '';
             Pasien::create([
                 'no_rm' => $validatedData['norm'],
                 'no_ktp' => $validatedData['noktp'],
@@ -85,6 +89,7 @@ class PendaftaranController extends Controller
                 'jenis_kelamin' => $validatedData['jeniskelamin'],
                 'alamat_detail' => $validatedData['detailalamat'],
                 'tempat_lahir' => $validatedData['tempatlahir'],
+                'foto_pasien' => $validatedData['fotopasien'],
 
                 'tanggal_lahir' => $request->get('tahunlahir') . '-' . $request->get('bulanlahir') . '-' . $request->get('tanggallahir'),
                 'agama' => $request->get('agama'),
@@ -111,7 +116,8 @@ class PendaftaranController extends Controller
         Periksa::create([
             'no_lab' => $validatedData['nolab'],
             'pasien_id' => Pasien::where('no_rm', $validatedData['norm'])->pluck('id')[0],
-            'dokter_id' => 0
+            'dokter_id' => 0,
+            'home_service' => 0
         ]);
 
         return redirect('/pendaftaran/order')->with('status',  1)->with('namapasien',  $validatedData['namapasien'])->with('nolab', $validatedData['nolab']);
@@ -145,6 +151,7 @@ class PendaftaranController extends Controller
                 'namapasien' => ['required'],
                 'tempatlahir' => ['required'],
                 'jeniskelamin' => ['required'],
+                'fotopasien' => ['image', 'file', 'max:1024'],
                 'detailalamat' => ['required']
             ];
 
@@ -166,6 +173,12 @@ class PendaftaranController extends Controller
 
             $validatedData = $request->validate($rules);
 
+            if ($request->file('fotopasien')) {
+                $currentPhoto = $periksa->pasien->foto_pasien;
+                if ($currentPhoto) Storage::delete($currentPhoto);
+                $validatedData['fotopasien'] = $request->file('fotopasien')->store('profilePhoto');
+            } else $validatedData['fotopasien'] = '';
+
             Pasien::where('id', '=', $periksa->pasien->id)->update([
                 'no_rm' => $validatedData['norm'],
                 'no_ktp' => $validatedData['noktp'],
@@ -174,6 +187,7 @@ class PendaftaranController extends Controller
                 'jenis_kelamin' => $validatedData['jeniskelamin'],
                 'alamat_detail' => $validatedData['detailalamat'],
                 'tempat_lahir' => $validatedData['tempatlahir'],
+                'foto_pasien' => $validatedData['fotopasien'],
                 'agama' => $request->get('agama'),
                 'status' => $request->get('status'),
                 'pendidikan' => $request->get('pendidikanterakhir'),
@@ -208,11 +222,6 @@ class PendaftaranController extends Controller
         Periksa::destroy($periksa->id);
         return redirect('/pendaftaran/order')->with('status',  0)->with('namapasien',  $periksa->pasien->nama)->with('nolab', $periksa->no_lab);
     }
-
-
-
-
-
 
     // AJAX HANDLER
     // Src : pendaftaran-index

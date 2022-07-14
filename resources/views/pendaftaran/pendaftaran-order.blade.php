@@ -88,7 +88,6 @@
         </div>
 
         <input id="pagenum" type="hidden" value="1">
-        <input id="fotopasien" name="fotopasien" type="file" class="d-none">
     </section>
     <!-- End of Order Page -->
 @endsection
