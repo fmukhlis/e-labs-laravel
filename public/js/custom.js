@@ -18,7 +18,7 @@ function hidePatientList(){
 function hideDoctorList(){
     document.querySelector('#pilihdokter').value = '';
     setTimeout(function(){
-        document.querySelector('#doctor-list').classList.add('d-none');
+        document.querySelector('#doctor-list').firstElementChild.classList.add('d-none');
     }, 100);
 }
 
@@ -98,15 +98,19 @@ $(document).ready(function() {
         });
 
         // Event untuk pilih foto profil
-        document.querySelector('div.btn-order-photo').addEventListener('click', function(){
-            document.querySelector('input#fotopasien').click();
-        });
-        document.querySelector('input#fotopasien').addEventListener('change', function(e){
-            document.querySelector('img#fotothumbnailpasien').src = URL.createObjectURL(e.target.files[0]);
-            document.querySelector('img#fotothumbnailpasien').onload = function() {
-                URL.revokeObjectURL(document.querySelector('img#fotothumbnailpasien').src) // Free memory
-              }
-        })
+        if(document.querySelector('div.btn-order-photo')){ 
+            document.querySelector('div.btn-order-photo').addEventListener('click', function(){
+                document.querySelector('input#fotopasien').click();
+            });
+        }
+        if(document.querySelector('input#fotopasien')){
+            document.querySelector('input#fotopasien').addEventListener('change', function(e){
+                document.querySelector('img#fotothumbnailpasien').src = URL.createObjectURL(e.target.files[0]);
+                document.querySelector('img#fotothumbnailpasien').onload = function() {
+                    URL.revokeObjectURL(document.querySelector('img#fotothumbnailpasien').src) // Free memory
+                }
+            })
+        }
     // End
 
 
@@ -126,27 +130,31 @@ $(document).ready(function() {
         function addDoctor(doctorData){
             // Hide Failed Alert (If Exists)
             document.querySelector('#error-doc-alert').classList.add('d-none');
+            // Store Doctor Data Into FormData Object
+            let formData = new FormData();
+            formData.append('kode', doctorData[0]);
+            formData.append('spesialisasi', doctorData[1]);
+            formData.append('nama', doctorData[2]);
+            formData.append('no_skp', doctorData[3]);
+            formData.append('no_sertif_skp', doctorData[4]);
+            formData.append('ttd', doctorData[5]);
+            formData.append('alamat', doctorData[6]);
+            formData.append('alamat_praktek', doctorData[7]);
+            formData.append('no_telp', doctorData[8]);
+            formData.append('no_hp', doctorData[9]);
+            formData.append('email', doctorData[10]);
             $.ajax({
                 url: '/pendaftaran/manageDoctor',
                 method: 'POST',
-                data: {
-                    kode: doctorData[0],
-                    spesialisasi: doctorData[1],
-                    nama: doctorData[2],
-                    no_skp: doctorData[3],
-                    no_sertif_skp: doctorData[4],
-                    ttd: doctorData[5],
-                    alamat: doctorData[6],
-                    alamat_praktek: doctorData[7],
-                    no_telp: doctorData[8],
-                    no_hp: doctorData[9],
-                    email: doctorData[10]
-                },
+                data: formData,
                 dataType: 'json',
+                processData: false,
+                contentType: false,
                 success: function(data) {
                     // Show Success Alert
-                    resetDoctorModal();
+                    resetDoctorModal(1);
                     var htmlalert = document.createElement('div');
+                    htmlalert.classList.add("mt-0");
                     htmlalert.innerHTML = data.alert;
                     document.querySelector('#select-doc-1').prepend(htmlalert);
                 },
@@ -156,15 +164,26 @@ $(document).ready(function() {
                 }
             })
         }
-        function updDoctor(nolab, doctorCode, doctorName, doctorSignature){
+        function updDoctor(nolab, doctorData){
+            // Store Updated Doctor Data Into FormData Object
+            let formData = new FormData();
+            formData.append('spesialisasi', doctorData[1]);
+            formData.append('nama', doctorData[2]);
+            formData.append('no_skp', doctorData[3]);
+            formData.append('no_sertif_skp', doctorData[4]);
+            if(doctorData[5]) formData.append('ttd', doctorData[5]);
+            else formData.append('ttd', '');
+            formData.append('alamat', doctorData[6]);
+            formData.append('alamat_praktek', doctorData[7]);
+            formData.append('no_telp', doctorData[8]);
+            formData.append('no_hp', doctorData[9]);
+            formData.append('email', doctorData[10]);
             $.ajax({
-                url: '/pendaftaran/'+selectedDoctorCode+'/manageDoctor',
-                method: 'PUT',
-                data: {
-                    kode: doctorCode,
-                    nama: doctorName,
-                    ttd: doctorSignature
-                },
+                url: '/pendaftaran/'+doctorData[0]+'/manageDoctor',
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
                 success: function() {
                     refreshDoctorTable(nolab);
                     document.querySelector('button#updateDoctor').previousElementSibling.click();
@@ -172,18 +191,32 @@ $(document).ready(function() {
                 error: function(){
                     // Show Failed Alert
                     document.querySelector('#error-edit-doc-alert').classList.remove('d-none');
-                    document.querySelector('#kodedokter-edit').classList.add('is-invalid');
-                    document.querySelector('#namadokter-edit').classList.add('is-invalid');
-                    document.querySelector('#ttddokter-edit').classList.add('is-invalid');
                 }
             })
         }
-        function destroyDoctor(){
+        function destroyDoctor(nolab){
             $.ajax({
                 url: '/pendaftaran/'+selectedDoctorCode+'/manageDoctor',
                 method: 'DELETE',
+                data: {
+                    nolab: nolab
+                },
                 success: function() {
-                    // Type function here...
+                    refreshDoctorTable(nolab);
+                    document.querySelector('button#updateDoctor').previousElementSibling.click();
+                }
+            })
+        }
+        function getDoctor(nolab) {
+            $.ajax({
+                url: '/pendaftaran/manageDoctor',
+                method: 'GET',
+                data: {
+                    nolab: nolab
+                },
+                dataType: 'json',
+                success: function(data) {
+                    resetEditDoctorModal(data);
                 }
             })
         }
@@ -215,9 +248,6 @@ $(document).ready(function() {
             })
         }
         // Event untuk Live Search Existing Doctor
-        if(document.querySelector('#doctor-list')){
-            document.querySelector('#doctor-list').classList.add('d-none');
-        } 
         $(document).on('keyup', '#pilihdokter', function() {
             let pilih_dokter = $(this).val();
             $.ajax({
@@ -228,14 +258,14 @@ $(document).ready(function() {
                 },
                 dataType: 'json',
                 success: function(data) {
-                    $('#doctor-list').html('');
-                    $('#doctor-list').html(data.table_data);
+                    document.querySelector('#doctor-list').firstElementChild.innerHTML = '';
+                    document.querySelector('#doctor-list').firstElementChild.innerHTML = data.table_data;
+                    document.querySelector('#doctor-list').firstElementChild.classList.remove('d-none');
+                    if (pilih_dokter == ''){
+                        document.querySelector('#doctor-list').firstElementChild.classList.add('d-none');
+                    }
                 }
             });
-            document.querySelector('#doctor-list').classList.remove('d-none');
-            if (pilih_dokter == ''){
-                document.querySelector('#doctor-list').classList.add('d-none');
-            }
         });
     // End
 
@@ -279,7 +309,9 @@ $(document).ready(function() {
                         document.querySelector('#edit-tabledoctor').classList.add('disabled');
                     }
                     if (e.target.id == 'edit-tabledoctor'){
-                        resetEditDoctorModal();
+                        document.querySelector('#error-edit-doc-alert').classList.add('d-none');
+                        const noLab = document.querySelector('#nolab').value;
+                        getDoctor(noLab);
                     }
                 });
             });
@@ -289,7 +321,7 @@ $(document).ready(function() {
 
 
     // Function For Managing Halaman Doctor Modal
-        function resetDoctorModal(halaman){
+        function resetDoctorModal(halaman = 0){
             isSelectDoctor = false;
             tempDoctorCode = '';
             if(halaman == 1){
@@ -311,30 +343,32 @@ $(document).ready(function() {
                 document.querySelector('#save-doc-btn-2').classList.add('d-none');
                 document.querySelector('#error-doc-alert').classList.add('d-none');
             }
-                // Reset Input
-                document.querySelector('#kodedokter').value = '';
-                $('#spesialisasi option[value=""]').prop('selected', 'selected');
-                document.querySelector('#namadokter').value = '';
-                document.querySelector('#noskp').value = '';
-                document.querySelector('#nosertifskp').value = '';
-                document.querySelector('#ttddokter').value = '';
-                document.querySelector('#alamatdokter').value = '';
-                document.querySelector('#alamatpraktek').value = '';
-                document.querySelector('#notelpdokter').value = '';
-                document.querySelector('#nohpdokter').value = '';
-                document.querySelector('#emaildokter').value = '';
+            // Reset Input
+            document.querySelector('#kodedokter').value = '';
+            $('#spesialisasi option[value=""]').prop('selected', 'selected');
+            document.querySelector('#namadokter').value = '';
+            document.querySelector('#noskp').value = '';
+            document.querySelector('#nosertifskp').value = '';
+            document.querySelector('#ttddokter').value = '';
+            document.querySelector('#alamatdokter').value = '';
+            document.querySelector('#alamatpraktek').value = '';
+            document.querySelector('#notelpdokter').value = '';
+            document.querySelector('#nohpdokter').value = '';
+            document.querySelector('#emaildokter').value = '';
         }
-        function resetEditDoctorModal(){
-            if(document.querySelector('#btn-close-doctor-alert')){
-                document.querySelector('#btn-close-doctor-alert').click();
-            }
-            document.querySelector('#error-edit-doc-alert').classList.add('d-none');
-            document.querySelector('#kodedokter-edit').value = document.querySelector('tbody#doctorTable tr').children[1].innerHTML;
-            document.querySelector('#namadokter-edit').value = document.querySelector('tbody#doctorTable tr').children[2].innerHTML;
+        function resetEditDoctorModal(doctorData){
+            // Reset to current data
+            document.querySelector('#kodedokter-edit').value = doctorData.kode;
+            document.querySelector('#namadokter-edit').value = doctorData.nama;
+            document.querySelector('#spesialisasi-edit').value = doctorData.spesialisasi;
+            document.querySelector('#noskp-edit').value = doctorData.no_skp;
+            document.querySelector('#nosertifskp-edit').value = doctorData.no_sertif_skp;
             document.querySelector('#ttddokter-edit').value = '';
-            document.querySelector('#kodedokter-edit').classList.remove('is-invalid');
-            document.querySelector('#namadokter-edit').classList.remove('is-invalid');
-            document.querySelector('#ttddokter-edit').classList.remove('is-invalid');
+            document.querySelector('#alamatdokter-edit').value = doctorData.alamat;
+            document.querySelector('#alamatpraktek-edit').value = doctorData.alamat_praktek;
+            document.querySelector('#notelpdokter-edit').value = doctorData.no_telp;
+            document.querySelector('#nohpdokter-edit').value = doctorData.no_hp;
+            document.querySelector('#emaildokter-edit').value = doctorData.email;
         }
     // End
 
@@ -373,7 +407,7 @@ $(document).ready(function() {
                         inputtedDoctorData.push(document.querySelector('#namadokter').value);
                         inputtedDoctorData.push(document.querySelector('#noskp').value);
                         inputtedDoctorData.push(document.querySelector('#nosertifskp').value);
-                        inputtedDoctorData.push(document.querySelector('#ttddokter').value);
+                        inputtedDoctorData.push(document.querySelector('#ttddokter').files[0]);
                         inputtedDoctorData.push(document.querySelector('#alamatdokter').value);
                         inputtedDoctorData.push(document.querySelector('#alamatpraktek').value);
                         inputtedDoctorData.push(document.querySelector('#notelpdokter').value);
@@ -405,21 +439,35 @@ $(document).ready(function() {
                 });
                 childNode.addEventListener('click', function(e){
                     if(e.target.id == 'updateDoctor'){
-                        // Hide Failed Alert (If Exists)
                         document.querySelector('#error-edit-doc-alert').classList.add('d-none');
-                        document.querySelector('#kodedokter-edit').classList.remove('is-invalid');
-                        document.querySelector('#namadokter-edit').classList.remove('is-invalid');
-                        document.querySelector('#ttddokter-edit').classList.remove('is-invalid');
-                        // Get Inputed Data
                         const nolab = document.querySelector('#nolab').value;
-                        const kode = document.querySelector('#kodedokter-edit').value;
-                        const nama = document.querySelector('#namadokter-edit').value;
-                        const ttd = document.querySelector('#ttddokter-edit').value;
+                        // Get inputed data
+                        const inputtedDoctorData = [];
+                        inputtedDoctorData.push(document.querySelector('#kodedokter-edit').value);
+                        inputtedDoctorData.push(document.querySelector('#spesialisasi-edit').value);
+                        inputtedDoctorData.push(document.querySelector('#namadokter-edit').value);
+                        inputtedDoctorData.push(document.querySelector('#noskp-edit').value);
+                        inputtedDoctorData.push(document.querySelector('#nosertifskp-edit').value);
+                        inputtedDoctorData.push(document.querySelector('#ttddokter-edit').files[0]);
+                        inputtedDoctorData.push(document.querySelector('#alamatdokter-edit').value);
+                        inputtedDoctorData.push(document.querySelector('#alamatpraktek-edit').value);
+                        inputtedDoctorData.push(document.querySelector('#notelpdokter-edit').value);
+                        inputtedDoctorData.push(document.querySelector('#nohpdokter-edit').value);
+                        inputtedDoctorData.push(document.querySelector('#emaildokter-edit').value);
                         // Update Doctor pada Tabel 'dokters' (DB)
-                        updDoctor(nolab, kode, nama, ttd);
+                        updDoctor(nolab, inputtedDoctorData);
                         // Disabled the EditDoctor and RemoveDoctor Button
                         document.querySelector('#remove-tabledoctor').classList.add('disabled');
                         document.querySelector('#edit-tabledoctor').classList.add('disabled');
+                    }
+                    if(e.target.id == 'deleteDoctor'){
+                        if(confirm('Anda yakin ingin menghapus data dokter ini ? \nAksi ini tidak dapat diurungkan !')){
+                            const nolab = document.querySelector('#nolab').value;
+                            destroyDoctor(nolab);
+                            // Disabled the EditDoctor and RemoveDoctor Button
+                            document.querySelector('#remove-tabledoctor').classList.add('disabled');
+                            document.querySelector('#edit-tabledoctor').classList.add('disabled');
+                        }
                     }
                 });
             });

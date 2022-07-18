@@ -177,7 +177,7 @@ class PendaftaranController extends Controller
                 $currentPhoto = $periksa->pasien->foto_pasien;
                 if ($currentPhoto) Storage::delete($currentPhoto);
                 $validatedData['fotopasien'] = $request->file('fotopasien')->store('profilePhoto');
-            } else $validatedData['fotopasien'] = '';
+            } else $validatedData['fotopasien'] = $periksa->pasien->foto_pasien;
 
             Pasien::where('id', '=', $periksa->pasien->id)->update([
                 'no_rm' => $validatedData['norm'],
@@ -207,11 +207,10 @@ class PendaftaranController extends Controller
                 'email' => $request->get('email')
             ]);
 
-            Periksa::where('id', '=', $periksa->id)->update([
-                'no_lab' => $validatedData['nolab'],
-                'pasien_id' => Pasien::where('no_rm', $validatedData['norm'])->pluck('id')[0],
-                'dokter_id' => 0
-            ]);
+            // Periksa::where('id', '=', $periksa->id)->update([
+            //     'no_lab' => $validatedData['nolab'],
+            //     'pasien_id' => Pasien::where('no_rm', $validatedData['norm'])->pluck('id')[0],
+            // ]);
 
             return redirect('/pendaftaran/' . $validatedData['nolab'] . '/order')->with('status',  2)->with('namapasien',  $validatedData['namapasien'])->with('nolab', $validatedData['nolab']);
         }
@@ -467,10 +466,17 @@ class PendaftaranController extends Controller
                 'kode' => ['required', 'numeric', 'unique:dokters,kode'],
                 'spesialisasi' => ['required'],
                 'nama' => ['required'],
-                'ttd' => ['required'],
-                'alamat' => ['required']
+                'no_skp' => ['nullable'],
+                'no_sertif_skp' => ['nullable'],
+                'ttd' => ['required', 'image', 'file', 'max:1024'],
+                'alamat' => ['required'],
+                'alamat_praktek' => ['nullable'],
+                'no_telp' => ['nullable'],
+                'no_hp' => ['nullable'],
+                'email' => ['nullable']
             ];
             $validatedData = $request->validate($rules);
+            $validatedData['ttd'] = $request->file('ttd')->store('doctorImage');
             Dokter::create($validatedData);
             $datas = array(
                 'alert' => '<div class="alert alert-success alert-dismissible fade show mt-0 mb-0" role="alert">
@@ -478,7 +484,7 @@ class PendaftaranController extends Controller
                                     <div class="row">
                                         <div class="col-11 text-truncate">
                                             <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill" /></svg>
-                                            Berhasil menambahkan <b>dr. ' . $validatedData['nama'] . ' ' . $validatedData['spesialisasi'] . '</b> !
+                                            Berhasil menambahkan data dokter !
                                             <button type="button" class="btn-close" id="btn-close-doctor-alert" data-bs-dismiss="alert" aria-label="Close"></button>
                                         </div>        
                                     <div>    
@@ -497,16 +503,16 @@ class PendaftaranController extends Controller
                 'nolab' => ['exists:periksas,no_lab']
             ];
             $validatedData = $request->validate($rules);
-            $datas = Periksa::where('no_lab', '=', $validatedData['nolab'])->get();
+            $dataPeriksa = Periksa::where('no_lab', '=', $validatedData['nolab'])->get();
             $output = '';
             $output .= "
             <tr class='align-middle'>
                 <td class='text-center'><input class='form-check-input' type='checkbox' value=''></td>
-                <td>" . $datas[0]->dokter->kode . "</td>
-                <td>dr. " . $datas[0]->dokter->nama . " " . $datas[0]->dokter->spesialisasi . "</td>
+                <td>" . $dataPeriksa[0]->dokter->kode . "</td>
+                <td>dr. " . $dataPeriksa[0]->dokter->nama . " " . $dataPeriksa[0]->dokter->spesialisasi . "</td>
             </tr>
             ";
-            if ($datas[0]->dokter->kode == 0) {
+            if ($dataPeriksa[0]->dokter->id == 0) {
                 $output = '
                 <tr>
                     <td class="text-center" colspan="3">Doctor not set</td>
@@ -514,7 +520,18 @@ class PendaftaranController extends Controller
                 ';
             }
             $datas = array(
-                'table_data' => $output
+                'table_data' => $output,
+                'kode' => $dataPeriksa[0]->dokter->kode,
+                'spesialisasi' => $dataPeriksa[0]->dokter->spesialisasi,
+                'nama' => $dataPeriksa[0]->dokter->nama,
+                'no_skp' => $dataPeriksa[0]->dokter->no_skp,
+                'no_sertif_skp' => $dataPeriksa[0]->dokter->no_sertif_skp,
+                'ttd' => $dataPeriksa[0]->dokter->ttd,
+                'alamat' => $dataPeriksa[0]->dokter->alamat,
+                'alamat_praktek' => $dataPeriksa[0]->dokter->alamat_praktek,
+                'no_telp' => $dataPeriksa[0]->dokter->no_telp,
+                'no_hp' => $dataPeriksa[0]->dokter->no_hp,
+                'email' => $dataPeriksa[0]->dokter->email
             );
             echo json_encode($datas);
         }
@@ -530,12 +547,24 @@ class PendaftaranController extends Controller
             }
             // Validation
             $rules = [
-                'nama' => ['required']
+                'spesialisasi' => ['required'],
+                'nama' => ['required'],
+                'no_skp' => ['nullable'],
+                'no_sertif_skp' => ['nullable'],
+                'ttd' => ['nullable', 'image', 'file', 'max:1024'],
+                'alamat' => ['required'],
+                'alamat_praktek' => ['nullable'],
+                'no_telp' => ['nullable'],
+                'no_hp' => ['nullable'],
+                'email' => ['nullable']
             ];
-            if ($request->get('kode') != $dokter->kode) {
-                $rules['kode'] = 'required|numeric|unique:dokters,kode';
-            }
             $validatedData = $request->validate($rules);
+            if ($request->file('ttd')) {
+                $currentPhoto = $dokter->ttd;
+                if ($currentPhoto) Storage::delete($currentPhoto);
+                $validatedData['ttd'] = $request->file('ttd')->store('doctorImage');
+            } else $validatedData['ttd'] = $dokter->ttd;
+
             // Update Validated Data to 'dokters' table
             Dokter::where('id', '=', $dokter->id)->update($validatedData);
         }
@@ -545,13 +574,11 @@ class PendaftaranController extends Controller
     public function destroyDoctor(Request $request, Dokter $dokter)
     {
         if ($request->ajax()) {
+            Periksa::where('no_lab', '=', $request->get('nolab'))->get()[0]->update(array('dokter_id' => 0));
             // Delete selected doctor
+            $currentPhoto = $dokter->ttd;
+            if ($currentPhoto) Storage::delete($currentPhoto);
             Dokter::destroy($dokter->id);
-            // Send random data back
-            $datas = array(
-                'random' => ''
-            );
-            echo json_encode($datas);
         }
     }
 
@@ -575,15 +602,14 @@ class PendaftaranController extends Controller
             if ($total_row) {
                 foreach ($datas as $data) {
                     $output .= '
-                    <div class="row g-0">
+                    <div class="row">
                         <div class="col">
-                            <div class="card-body p-0">
-                                <p class="card-text dokterlist mb-0 p-2">dr. ' . $data->nama . ' ' . $data->gelar . '</p>
+                            <div class="card-body p-0 border border-top-0">
+                                <p class="card-text dokterlist mb-0 p-2">dr. ' . $data->nama . ' ' . $data->spesialisasi . '</p>
                                 <div class="d-none">' . $data->kode . '</div>
                             </div>  
                         </div>
                     </div>
-                    <hr class="mt-0 mb-0">
                     ';
                 }
             } else {
@@ -593,12 +619,11 @@ class PendaftaranController extends Controller
                     $output = '
                     <div class="row g-0 text-center">
                         <div class="col">
-                            <div class="card-body p-1">
-                                <p class="card-text mb-0"><small class="text-muted">Doctor not found</small></p>
+                            <div class="card-body p-0 border border-top-0">
+                                <p class="card-text mb-0 p-2"><small class="text-muted">Doctor not found</small></p>
                             </div>
                         </div>
                     </div>
-                    <hr class="mt-0 mb-0">
                     ';
                 }
             }

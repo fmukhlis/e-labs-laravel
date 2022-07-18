@@ -41,7 +41,8 @@ Route::get('/pendaftaran/func/getDoctorData', [PendaftaranController::class, 'ge
 // Manage Doctor Model / Database
 Route::post('/pendaftaran/manageDoctor', [PendaftaranController::class, 'storeDoctor']);
 Route::get('/pendaftaran/manageDoctor', [PendaftaranController::class, 'displayDoctor']);
-Route::put('/pendaftaran/{dokter:kode}/manageDoctor', [PendaftaranController::class, 'updateDoctor']);
+Route::post('/pendaftaran/{dokter:kode}/manageDoctor', [PendaftaranController::class, 'updateDoctor']);
+Route::delete('/pendaftaran/{dokter:kode}/manageDoctor', [PendaftaranController::class, 'destroyDoctor']);
 
 // Manage (Pemeriksaan)<->(Periksa) Model / Database
 Route::put('/pendaftaran/{periksa:no_lab}/syncOrderTest', [PendaftaranController::class, 'syncOrderTest']);

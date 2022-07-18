@@ -141,11 +141,9 @@ div#extra-1 div.card {
 
 div#select-doc-1 div.card {
     z-index: 1;
-    min-width: 342px;
 }
 div#select-doc-1 div.card div.row p:hover {
     background-color: whitesmoke;
-    font-weight: bold;
 }
 div.gap-registrasi {
     margin-bottom: 0.875rem !important;

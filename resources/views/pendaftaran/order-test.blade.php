@@ -127,189 +127,6 @@
                             Edit Selected
                         </div>
                     </div>
-
-                    <!-- Modal -->
-                    <div class="modal fade" id="selectDoctorModal" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="modalTitle">Pilih Dokter Pengirim</h5>
-                                    <button type="button" id="close-doc-btn" class="btn-close"
-                                        data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="container-fluid">
-                                        <div id="select-doc-1" class="row g-2">
-                                            <label for="pilihdokter" class="col-3 col-form-label">Pilih
-                                                dokter</label>
-                                            <div class="col-9">
-                                                <input name="pilihdokter" id="pilihdokter" class="form-control"
-                                                    type="text" placeholder="Cari berdasarkan nama..."
-                                                    autocomplete="off" onfocusout="hideDoctorList()">
-
-                                                <div class="position-absolute">
-                                                    <div id="doctor-list" class="card mb-3"
-                                                        style="max-width: 540px;">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-4 text-muted"><small>Dokter tidak ditemukan ?</small>
-                                            </div>
-                                            <div class="col-4">
-                                                <div id="add-doc-btn" class="btn btn-outline-success btn-sm">
-                                                    Tambahkan dokter</div>
-                                            </div>
-                                        </div>
-                                        <div id="select-doc-2" class="row g-2 d-none">
-                                            <div id="error-doc-alert"
-                                                class="alert alert-danger alert-dismissible fade show mt-0 mb-0 d-none"
-                                                role="alert">
-                                                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img"
-                                                    aria-label="Danger:">
-                                                    <use xlink:href="#exclamation-triangle-fill" />
-                                                </svg>
-                                                Kesalahan validasi. Gagal menambahkan data dokter.
-                                            </div>
-                                            <label for="kodedokter" class="col-3 col-form-label">Kode dokter</label>
-                                            <div class="col-3">
-                                                <input id="kodedokter" name="kodedokter" class="form-control"
-                                                    type="text" onkeypress="return onlyNumInput(event)">
-                                            </div>
-                                            <div class="col-6 text-end">
-                                                <div id="select-doc-btn" class="btn btn-outline-success btn-sm">
-                                                    Pilih dokter</div>
-                                            </div>
-                                            <label for="spesialisasi" class="col-3 col-form-label">Spesialisasi</label>
-                                            <div class="col-7">
-                                                <select class="form-select" id="spesialisasi" name="spesialisasi">
-                                                    <option selected value="">---Pilih Spesialisasi---</option>
-                                                    @foreach ($spesialisasi as $s)
-                                                        <option
-                                                            {{ old('spesialisasi') == $s->gelar ? 'selected' : '' }}
-                                                            value="{{ $s->gelar }}">{{ $s->nama }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            <label for="namadokter" class="col-3 col-form-label">Nama</label>
-                                            <div class="col-9">
-                                                <input id="namadokter" name="namadokter" class="form-control"
-                                                    type="text" autocomplete="off">
-                                            </div>
-                                            <label for="noskp" class="col-3 col-form-label">No. SKP</label>
-                                            <div class="col-8">
-                                                <input id="noskp" name="noskp" class="form-control" type="text"
-                                                    autocomplete="off">
-                                            </div>
-                                            <label for="nosertifskp" class="col-3 col-form-label">No. Sertif.
-                                                SKP</label>
-                                            <div class="col-8">
-                                                <input id="nosertifskp" name="nosertifskp" class="form-control"
-                                                    type="text" autocomplete="off">
-                                            </div>
-                                            <label for="ttddokter" class="col-3 col-form-label">TTD
-                                                Dokter</label>
-                                            <div class="col-6">
-                                                <input id="ttddokter" name="ttddokter"
-                                                    class="form-control form-control-sm" type="file">
-                                            </div>
-                                            <hr class="mb-0 mt-3">
-                                            <label for="alamatdokter" class="col-12 mt-0 text-center bg-light">Alamat
-                                                Dokter</label>
-                                            <div class="col-12">
-                                                <textarea class="form-control" id="alamatdokter" name="alamatdokter" rows="2" placeholder="Detail Alamat"
-                                                    required></textarea>
-                                            </div>
-                                            <div class="col-12">
-                                                <textarea class="form-control mb-2" id="alamatpraktek" name="alamatpraktek" rows="2"
-                                                    placeholder="Detail Alamat Praktek" required></textarea>
-                                            </div>
-                                            <hr class="mb-0 mt-3">
-                                            <label for="notelpdokter" class="col-12 mt-0 text-center bg-light">Kontak
-                                                Dokter</label>
-                                            <label for="notelpdokter" class="col-3 col-form-label">No.
-                                                Telpon</label>
-                                            <div class="col-9">
-                                                <input id="notelpdokter" name="notelpdokter" class="form-control"
-                                                    type="text" autocomplete="off">
-                                            </div>
-                                            <label for="nohpdokter" class="col-3 col-form-label">No. Hp</label>
-                                            <div class="col-9">
-                                                <input id="nohpdokter" name="nohpdokter" class="form-control"
-                                                    type="text" autocomplete="off">
-                                            </div>
-                                            <label for="emaildokter" class="col-3 col-form-label">Email</label>
-                                            <div class="col-9">
-                                                <input id="emaildokter" name="emaildokter" class="form-control"
-                                                    type="text" autocomplete="off">
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" id="cancel-doc-btn" class="btn btn-secondary"
-                                        data-bs-dismiss="modal">Cancel</button>
-                                    <button type="button" id="save-doc-btn-1"
-                                        class="btn btn-primary d-none">Add</button>
-                                    <button type="button" id="save-doc-btn-2" class="btn btn-primary"
-                                        data-bs-dismiss="modal" hidden>Select</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Modal -->
-                    <div class="modal fade" id="editDoctorModal" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Edit Data Dokter</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="container-fluid">
-                                        <div id="select-doc-3" class="row g-2">
-                                            <div id="error-edit-doc-alert"
-                                                class="alert alert-danger alert-dismissible fade show mt-0 mb-0"
-                                                role="alert">
-                                                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img"
-                                                    aria-label="Danger:">
-                                                    <use xlink:href="#exclamation-triangle-fill" />
-                                                </svg>
-                                                Kesalahan validasi. Gagal mengubah data dokter.
-                                            </div>
-                                            <label for="kodedokter-edit" class="col-3 col-form-label">Kode
-                                                dokter</label>
-                                            <div class="col-4">
-                                                <input id="kodedokter-edit" name="kodedokter-edit"
-                                                    class="form-control" type="text" placeholder="Kode">
-                                            </div>
-                                            <div class="col-5"></div>
-                                            <label for="namadokter-edit" class="col-3 col-form-label">Nama</label>
-                                            <div class="col-9">
-                                                <input id="namadokter-edit" name="namadokter-edit"
-                                                    class="form-control" type="text"
-                                                    placeholder="Nama dan gelar lengkap..." autocomplete="off">
-                                            </div>
-                                            <label for="ttddokter-edit" class="col-3 col-form-label">TTD
-                                                Dokter</label>
-                                            <div class="col-6">
-                                                <input id="ttddokter-edit" name="ttddokter-edit"
-                                                    class="form-control form-control-sm" type="file">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary"
-                                        data-bs-dismiss="modal">Cancel</button>
-                                    <button type="button" id="updateDoctor" class="btn btn-primary">Update</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 <hr>
             </div>
@@ -413,7 +230,8 @@
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary"
                                         data-bs-dismiss="modal">Close</button>
-                                    <button type="button" id="saveTest" class="btn btn-primary">Save changes</button>
+                                    <button type="button" id="saveTest" class="btn btn-primary">Save
+                                        changes</button>
                                 </div>
                             </div>
                         </div>
@@ -468,3 +286,238 @@
         </div>
     </div>
 </form>
+
+<!-- Doctor Modal -->
+<div class="modal fade" id="selectDoctorModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Pilih Dokter Pengirim</h5>
+                <button type="button" id="close-doc-btn" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    {{-- Form Select Doctor --}}
+                    <div id="select-doc-1" class="row g-2">
+                        <label for="pilihdokter" class="col-3 col-form-label">Pilih
+                            dokter</label>
+                        <div class="col-9">
+                            <input name="pilihdokter" id="pilihdokter" class="form-control" type="text"
+                                placeholder="Cari berdasarkan nama..." autocomplete="off"
+                                onfocusout="hideDoctorList()">
+
+                            <div id="doctor-list" class="card border-0">
+                                <div class="container p-0"></div>
+                            </div>
+                        </div>
+                        <div class="col-4 text-muted"><small>Dokter tidak ditemukan ?</small>
+                        </div>
+                        <div class="col-4">
+                            <div id="add-doc-btn" class="btn btn-outline-success btn-sm">
+                                Tambahkan dokter</div>
+                        </div>
+                    </div>
+                    {{-- End Of Form Select Doctor --}}
+                    {{-- Form Add Doctor --}}
+                    <div id="select-doc-2" class="row g-2 d-none">
+                        <div id="error-doc-alert"
+                            class="alert alert-danger alert-dismissible fade show mt-0 mb-0 d-none" role="alert">
+                            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img"
+                                aria-label="Danger:">
+                                <use xlink:href="#exclamation-triangle-fill" />
+                            </svg>
+                            Kesalahan validasi. Gagal menambahkan data dokter.
+                        </div>
+                        <label for="kodedokter" class="col-3 col-form-label">Kode dokter</label>
+                        <div class="col-3">
+                            <input id="kodedokter" name="kodedokter" class="form-control" type="text"
+                                onkeypress="return onlyNumInput(event)">
+                        </div>
+                        <div class="col-6 text-end">
+                            <div id="select-doc-btn" class="btn btn-outline-success btn-sm">
+                                Pilih dokter</div>
+                        </div>
+                        <label for="spesialisasi" class="col-3 col-form-label">Spesialisasi</label>
+                        <div class="col-7">
+                            <select class="form-select" id="spesialisasi" name="spesialisasi">
+                                <option selected value="">---Pilih Spesialisasi---</option>
+                                @foreach ($spesialisasi as $s)
+                                    <option {{ old('spesialisasi') == $s->gelar ? 'selected' : '' }}
+                                        value="{{ $s->gelar }}">{{ $s->nama }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <label for="namadokter" class="col-3 col-form-label">Nama</label>
+                        <div class="col-9">
+                            <input id="namadokter" name="namadokter" class="form-control" type="text"
+                                autocomplete="off">
+                        </div>
+                        <label for="noskp" class="col-3 col-form-label">No. SKP</label>
+                        <div class="col-8">
+                            <input id="noskp" name="noskp" class="form-control" type="text"
+                                autocomplete="off">
+                        </div>
+                        <label for="nosertifskp" class="col-3 col-form-label">No. Sertif.
+                            SKP</label>
+                        <div class="col-8">
+                            <input id="nosertifskp" name="nosertifskp" class="form-control" type="text"
+                                autocomplete="off">
+                        </div>
+                        <label for="ttddokter" class="col-3 col-form-label">TTD
+                            Dokter</label>
+                        <div class="col-6">
+                            <input id="ttddokter" name="ttddokter" class="form-control form-control-sm"
+                                type="file">
+                        </div>
+                        <hr class="mb-0 mt-3">
+                        <label for="alamatdokter" class="col-12 mt-0 text-center bg-light">Alamat
+                            Dokter</label>
+                        <div class="col-12">
+                            <textarea class="form-control" id="alamatdokter" name="alamatdokter" rows="2" placeholder="Detail Alamat"
+                                required></textarea>
+                        </div>
+                        <div class="col-12">
+                            <textarea class="form-control mb-2" id="alamatpraktek" name="alamatpraktek" rows="2"
+                                placeholder="Detail Alamat Praktek" required></textarea>
+                        </div>
+                        <hr class="mb-0 mt-3">
+                        <label for="notelpdokter" class="col-12 mt-0 text-center bg-light">Kontak
+                            Dokter</label>
+                        <label for="notelpdokter" class="col-3 col-form-label">No.
+                            Telpon</label>
+                        <div class="col-9">
+                            <input id="notelpdokter" name="notelpdokter" class="form-control" type="text"
+                                autocomplete="off">
+                        </div>
+                        <label for="nohpdokter" class="col-3 col-form-label">No. Hp</label>
+                        <div class="col-9">
+                            <input id="nohpdokter" name="nohpdokter" class="form-control" type="text"
+                                autocomplete="off">
+                        </div>
+                        <label for="emaildokter" class="col-3 col-form-label">Email</label>
+                        <div class="col-9">
+                            <input id="emaildokter" name="emaildokter" class="form-control" type="text"
+                                autocomplete="off">
+                        </div>
+                    </div>
+                    {{-- End of Form Add Doctor --}}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="cancel-doc-btn" class="btn btn-secondary"
+                    data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="save-doc-btn-1" class="btn btn-primary d-none">Add</button>
+                <button type="button" id="save-doc-btn-2" class="btn btn-primary" data-bs-dismiss="modal"
+                    hidden>Select</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Doctor Modal -->
+<div class="modal fade" id="editDoctorModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Data Dokter</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div id="select-doc-3" class="row g-2">
+                        <div id="error-edit-doc-alert"
+                            class="alert alert-danger alert-dismissible fade show mt-0 mb-0" role="alert">
+                            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img"
+                                aria-label="Danger:">
+                                <use xlink:href="#exclamation-triangle-fill" />
+                            </svg>
+                            Kesalahan validasi. Gagal mengubah data dokter.
+                        </div>
+                        <label for="kodedokter-edit" class="col-3 col-form-label">Kode
+                            dokter</label>
+                        <div class="col-4">
+                            <input id="kodedokter-edit" name="kodedokter-edit" class="form-control" type="text">
+                        </div>
+                        <div class="col-5"></div>
+                        <label for="spesialisasi-edit" class="col-3 col-form-label">Spesialisasi</label>
+                        <div class="col-7">
+                            <select class="form-select" id="spesialisasi-edit" name="spesialisasi-edit">
+                                <option selected value="">---Pilih Spesialisasi---</option>
+                                @foreach ($spesialisasi as $s)
+                                    <option value="{{ $s->gelar }}">{{ $s->nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <label for="namadokter-edit" class="col-3 col-form-label">Nama</label>
+                        <div class="col-9">
+                            <input id="namadokter-edit" name="namadokter-edit" class="form-control" type="text"
+                                placeholder="Nama dan gelar lengkap..." autocomplete="off">
+                        </div>
+                        <label for="noskp-edit" class="col-3 col-form-label">No. SKP</label>
+                        <div class="col-8">
+                            <input id="noskp-edit" name="noskp-edit" class="form-control" type="text"
+                                autocomplete="off">
+                        </div>
+                        <label for="nosertifskp-edit" class="col-3 col-form-label">No. Sertif.
+                            SKP</label>
+                        <div class="col-8">
+                            <input id="nosertifskp-edit" name="nosertifskp-edit" class="form-control" type="text"
+                                autocomplete="off">
+                        </div>
+                        <label for="ttddokter-edit" class="col-3 col-form-label">TTD
+                            Dokter</label>
+                        <div class="col-6">
+                            <input id="ttddokter-edit" name="ttddokter-edit" class="form-control form-control-sm"
+                                type="file">
+                        </div>
+                        <hr class="mb-0 mt-3">
+                        <label for="alamatdokter-edit" class="col-12 mt-0 text-center bg-light">Alamat
+                            Dokter</label>
+                        <div class="col-12">
+                            <textarea class="form-control" id="alamatdokter-edit" name="alamatdokter-edit" rows="2"
+                                placeholder="Detail Alamat" required></textarea>
+                        </div>
+                        <div class="col-12">
+                            <textarea class="form-control mb-2" id="alamatpraktek-edit" name="alamatpraktek-edit" rows="2"
+                                placeholder="Detail Alamat Praktek" required></textarea>
+                        </div>
+                        <hr class="mb-0 mt-3">
+                        <label for="notelpdokter-edit" class="col-12 mt-0 text-center bg-light">Kontak
+                            Dokter</label>
+                        <label for="notelpdokter-edit" class="col-3 col-form-label">No.
+                            Telpon</label>
+                        <div class="col-9">
+                            <input id="notelpdokter-edit" name="notelpdokter-edit" class="form-control"
+                                type="text" autocomplete="off">
+                        </div>
+                        <label for="nohpdokter-edit" class="col-3 col-form-label">No. Hp</label>
+                        <div class="col-9">
+                            <input id="nohpdokter-edit" name="nohpdokter-edit" class="form-control" type="text"
+                                autocomplete="off">
+                        </div>
+                        <label for="emaildokter-edit" class="col-3 col-form-label">Email</label>
+                        <div class="col-9">
+                            <input id="emaildokter-edit" name="emaildokter-edit" class="form-control" type="text"
+                                autocomplete="off">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-6 px-0">
+                            <button id="deleteDoctor" class="btn btn-danger">Delete</button>
+                        </div>
+                        <div class="col-6 px-0 text-end">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" id="updateDoctor" class="btn btn-primary">Update</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
