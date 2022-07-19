@@ -34,7 +34,8 @@
 
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link {{ $title === 'Home' ? 'active' : '' }}" aria-current="page" href="/">
+                        <a class="nav-link {{ $title === 'Home' ? 'active' : '' }}" aria-current="page"
+                            href="/">
                             <img src="{{ asset('assets/home.png') }}" class="rounded-circle me-2" alt="Logo Aplikasi">
                         </a>
                     </li>
@@ -190,8 +191,9 @@
                         </span>
                         <ul class="navbar-nav ms-1 me-2">
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle btn-dropdown-sort" href="" id="btn-dropdown-sort"
-                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <a class="nav-link dropdown-toggle btn-dropdown-sort" href=""
+                                    id="btn-dropdown-sort" role="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
                                     Latest
                                 </a>
                                 <ul class="dropdown-menu bg-dark" aria-labelledby="btn-dropdown-sort">
@@ -206,9 +208,9 @@
                         <span class="navbar-text text-secondary ms-2 me-1">
                             Filter :
                         </span>
-                        <div class="btn btn-refresh btn-outline-light" data-bs-toggle="modal"
-                            data-bs-target="#filterModal">
-                            Add</div>
+                        <div class="btn btn-outline-light btn-add-filter" data-bs-toggle="modal"
+                            data-bs-target="#filterModal">Add
+                        </div>
                         <div class="btn btn-clear-filter btn-secondary ms-1 me-2 disabled">Clear</div>
                         <div class="vr text-light"></div>
                         <div class="btn btn-refresh btn-success ms-2 me-2">Refresh</div>
@@ -343,8 +345,8 @@
                                 @endfor
                             </select>
                         </div>
-                        <input class="btn-check" type="checkbox" id="allTimeCheck" value="" autocomplete="off"
-                            checked>
+                        <input class="btn-check" type="checkbox" id="allTimeCheck" value=""
+                            autocomplete="off" checked>
                         <label class="ms-2 btn btn-outline-primary align-top" for="allTimeCheck">All Time</label>
 
                         <p></p>

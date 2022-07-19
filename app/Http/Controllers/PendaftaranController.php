@@ -371,6 +371,11 @@ class PendaftaranController extends Controller
             $total_row = $datas->count();
             if ($total_row) {
                 foreach ($datas as $data) {
+                    $dokter = '';
+                    if (strlen($data->dokter->nama) < 23) {
+                        $dokter = '-';
+                        if ($data->dokter->nama != '-') $dokter = 'dr. ' . $data->dokter->nama . ', ' . $data->dokter->spesialisasi;
+                    } else $dokter = 'dr. ' . substr($data->dokter->nama, 0, 19) . '...' . ', ' . $data->dokter->spesialisasi;
                     $output .= "
                         <tr class='align-middle'>
                             <td class='text-center'><a class='btn btn-success p-1 pt-0 pb-0' href='/pendaftaran/" . $data->no_lab . "/order'><small>Select</small></a></td>
@@ -379,7 +384,7 @@ class PendaftaranController extends Controller
                             <td>" . $data->created_at . "</td>
                             <td>" . $data->pasien->jenis_kelamin . "</td>
                             <td>" . Carbon::parse($data->pasien->tanggal_lahir)->diff(Carbon::now())->format('%y tahun, %m bulan') . "</td>
-                            <td>" . $data->dokter->nama . "</td>
+                            <td>" . $dokter . "</td>
                         </tr>
                         ";
                 }
@@ -504,12 +509,15 @@ class PendaftaranController extends Controller
             ];
             $validatedData = $request->validate($rules);
             $dataPeriksa = Periksa::where('no_lab', '=', $validatedData['nolab'])->get();
+            $dokter = '';
+            if (strlen($dataPeriksa[0]->dokter->nama) < 33) $dokter = $dataPeriksa[0]->dokter->nama;
+            else $dokter = substr($dataPeriksa[0]->dokter->nama, 0, 29) . '...';
             $output = '';
             $output .= "
             <tr class='align-middle'>
                 <td class='text-center'><input class='form-check-input' type='checkbox' value=''></td>
                 <td>" . $dataPeriksa[0]->dokter->kode . "</td>
-                <td>dr. " . $dataPeriksa[0]->dokter->nama . " " . $dataPeriksa[0]->dokter->spesialisasi . "</td>
+                <td>dr. " . $dokter . ", " . $dataPeriksa[0]->dokter->spesialisasi . "</td>
             </tr>
             ";
             if ($dataPeriksa[0]->dokter->id == 0) {
@@ -605,7 +613,7 @@ class PendaftaranController extends Controller
                     <div class="row">
                         <div class="col">
                             <div class="card-body p-0 border border-top-0">
-                                <p class="card-text dokterlist mb-0 p-2">dr. ' . $data->nama . ' ' . $data->spesialisasi . '</p>
+                                <p class="card-text dokterlist mb-0 p-2">dr. ' . $data->nama . ', ' . $data->spesialisasi . '</p>
                                 <div class="d-none">' . $data->kode . '</div>
                             </div>  
                         </div>

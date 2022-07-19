@@ -129,6 +129,7 @@ $(document).ready(function() {
     // AJAX Request for Managing Doctor 
         function addDoctor(doctorData){
             // Hide Failed Alert (If Exists)
+            document.querySelector('div#select-doc-2').classList.add('d-none');
             document.querySelector('#error-doc-alert').classList.add('d-none');
             // Store Doctor Data Into FormData Object
             let formData = new FormData();
@@ -160,6 +161,7 @@ $(document).ready(function() {
                 },
                 error: function(){
                     // Show Failed Alert
+                    document.querySelector('div#select-doc-2').classList.remove('d-none');
                     document.querySelector('#error-doc-alert').classList.remove('d-none');
                 }
             })
@@ -234,6 +236,7 @@ $(document).ready(function() {
             })
         }
         function refreshDoctorTable(nolab){ 
+            $('tbody#doctorTable').html('<tr><td class="text-center" colspan="3">Loading...</td></tr>');
             $.ajax({
                 url: '/pendaftaran/manageDoctor',
                 method: 'GET',
@@ -249,23 +252,30 @@ $(document).ready(function() {
         }
         // Event untuk Live Search Existing Doctor
         $(document).on('keyup', '#pilihdokter', function() {
-            let pilih_dokter = $(this).val();
-            $.ajax({
-                url: "/pendaftaran/func/getDoctorData",
-                method: 'GET',
-                data: {
-                    searchValue: pilih_dokter
-                },
-                dataType: 'json',
-                success: function(data) {
-                    document.querySelector('#doctor-list').firstElementChild.innerHTML = '';
-                    document.querySelector('#doctor-list').firstElementChild.innerHTML = data.table_data;
+            let inputField = $(this);
+            setTimeout(function(){
+                let pilih_dokter = inputField.val();
+                if (pilih_dokter != ''){
+                    // Fx loading ketika sedang mencari data dokter yang ada
+                    document.querySelector('#doctor-list').firstElementChild.innerHTML = '<div class="row g-0 text-center"><div class="col"><div class="card-body p-0 border border-top-0"><p class="card-text mb-0 p-2"><small class="text-muted">Loading...</small></p></div></div></div>';
                     document.querySelector('#doctor-list').firstElementChild.classList.remove('d-none');
-                    if (pilih_dokter == ''){
-                        document.querySelector('#doctor-list').firstElementChild.classList.add('d-none');
-                    }
                 }
-            });
+                $.ajax({
+                    url: "/pendaftaran/func/getDoctorData",
+                    method: 'GET',
+                    data: {
+                        searchValue: pilih_dokter
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        document.querySelector('#doctor-list').firstElementChild.innerHTML = data.table_data;
+                        document.querySelector('#doctor-list').firstElementChild.classList.remove('d-none');
+                        if (pilih_dokter == ''){
+                            document.querySelector('#doctor-list').firstElementChild.classList.add('d-none');
+                        }
+                    }
+                });
+            }, 1);
         });
     // End
 

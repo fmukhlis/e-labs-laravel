@@ -406,11 +406,18 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" id="cancel-doc-btn" class="btn btn-secondary"
-                    data-bs-dismiss="modal">Cancel</button>
-                <button type="button" id="save-doc-btn-1" class="btn btn-primary d-none">Add</button>
-                <button type="button" id="save-doc-btn-2" class="btn btn-primary" data-bs-dismiss="modal"
-                    hidden>Select</button>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-8"></div>
+                        <div class="col-4 px-0 text-end">
+                            <button type="button" id="cancel-doc-btn" class="btn btn-secondary"
+                                data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" id="save-doc-btn-1" class="btn btn-primary d-none">Add</button>
+                            <button type="button" id="save-doc-btn-2" class="btn btn-primary"
+                                data-bs-dismiss="modal" hidden>Select</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

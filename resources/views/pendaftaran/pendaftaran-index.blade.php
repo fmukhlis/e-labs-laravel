@@ -63,6 +63,7 @@
 
             // Live Data Table AJAX
             function fetch_cust_data() {
+                $('tbody').html('<tr><td class="text-center" colspan="7">Loading...</td></tr>');
                 $.ajax({
                     url: "/pendaftaran/func/searchResTable",
                     method: 'GET',
@@ -219,7 +220,6 @@
                     $('div.btn-clear-filter').removeClass('disabled');
                 }
 
-                console.log(filter_datetime, filter_doctor, filter_gender)
                 fetch_cust_data();
             });
             // Filter Modal
@@ -249,7 +249,6 @@
             // Refresh Button
             $(document).on('click', 'div.btn-refresh', function() {
                 fetch_cust_data();
-                console.log('asdas');
             });
             // Refresh Button
         });

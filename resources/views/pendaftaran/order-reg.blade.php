@@ -44,7 +44,7 @@
         <hr class="pt-1 mt-2 mb-2">
     </div>
 
-    <div class="row bg-light">
+    <div class="row bg-light mt-2">
         {{-- --- --}}
         <div class="col-6">
             <div class="container">
