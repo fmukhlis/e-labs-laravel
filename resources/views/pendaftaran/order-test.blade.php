@@ -7,13 +7,11 @@
             <div class="row">
                 <label class="col-1 col-form-label">No. Lab.</label>
                 <div class="col-2">
-                    <input type="text" class="form-control @error('nolab') is-invalid @enderror"
-                        value="{{ $test_data->no_lab }}" readonly>
+                    <input type="text" class="form-control" value="{{ $test_data->no_lab }}" readonly>
                 </div>
                 <label class="col-1 col-form-label text-end">No. RM</label>
                 <div class="col-3">
-                    <input type="text" class="form-control @error('nolab') is-invalid @enderror"
-                        value="{{ $test_data->pasien->no_rm }}" readonly>
+                    <input type="text" class="form-control" value="{{ $test_data->pasien->no_rm }}" readonly>
                 </div>
 
                 <label class="col-1 offset-1 col-form-label text-end">No. KTP</label>
@@ -55,34 +53,43 @@
                             <label for="asalruangan" class="col-3 col-form-label">Asal
                                 Ruangan</label>
                             <div class="col-9">
-                                <select class="form-select" id="asalruangan" name="asalruangan">
+                                <select class="form-select @error('asalruangan') is-invalid go-to-page-2 @enderror"
+                                    id="asalruangan" name="asalruangan">
                                     <option selected value="">---Pilih Ruangan---</option>
                                     @foreach ($rooms as $room)
-                                        <option {{ old('asalruangan') == $room->no_sep ? 'selected' : '' }}
-                                            value="{{ $room->no_sep }}">{{ $room->ruangan }}
+                                        <option
+                                            {{ old('asalruangan', $test_data->asal_ruangan) == $room->ruangan ? 'selected' : '' }}
+                                            value="{{ $room->ruangan }}">{{ $room->ruangan }}
                                         </option>
                                     @endforeach
                                 </select>
                             </div>
-
-                            <label for="nosep" class="col-2 col-form-label">No. SEP</label>
-                            <div class="col-3">
-                                <input type="text" class="form-control" id="nosep" name="nosep"
-                                    value="{{ old('nosep', $test_data->no_sep) }}">
-                            </div>
-
-                            <label for="metodebayar" class="col-3 col-form-label text-end pe-1">Metode
+                            <label for="metodebayar" class="col-3 col-form-label pe-1">Metode
                                 Bayar</label>
-                            <div class="col-4">
+                            <div class="col-5">
                                 <select class="form-select" id="metodebayar" name="metodebayar"
                                     onchange="onMetodeBayarChange()">
-                                    <option {{ old('metodebayar') == 'Cash' ? 'selected' : '' }} value="Cash">
+                                    <option
+                                        {{ old('metodebayar', $test_data->metode_bayar) == 'Cash' ? 'selected' : '' }}
+                                        value="Cash">
                                         Cash
                                     </option>
-                                    <option {{ old('metodebayar') == 'BPJS' ? 'selected' : '' }} value="BPJS">
+                                    <option
+                                        {{ old('metodebayar', $test_data->metode_bayar) == 'BPJS' ? 'selected' : '' }}
+                                        value="BPJS">
                                         BPJS
                                     </option>
                                 </select>
+                            </div>
+                            <div class="col-4"></div>
+                            <div class="col-12 hidden">
+                                <input type="text"
+                                    class="form-control @error('nosep') is-invalid go-to-page-2 @enderror"
+                                    id="nosep" name="nosep" value="{{ old('nosep', $test_data->no_sep) }}"
+                                    placeholder="No. SEP">
+                                @error('nosep')
+                                    <div class="invalid-feedback">No. SEP tidak valid</div>
+                                @enderror
                             </div>
                         </div>
                     </div>
@@ -247,7 +254,8 @@
             <div class="row g-1 px-3">
                 <div class="col-6">
                     <div class="form-check pt-2">
-                        <input id="homeservice" class="form-check-input" name="homeservice" type="checkbox">
+                        <input id="homeservice" class="form-check-input" name="homeservice" type="checkbox"
+                            value="1" {{ old('homeservice', $test_data->home_service) == '1' ? 'checked' : '' }}>
                         <label class="form-check-label" for="homeservice">
                             Pasien Home Service
                         </label>
@@ -275,7 +283,7 @@
             </div>
         </div>
         <div class="col-6 text-center">
-            <button type="submit" class="btn btn-success btn-order-save">
+            <button type="submit" class="btn btn-success btn-order-save col-3">
                 Save Data
             </button>
         </div>
@@ -290,7 +298,7 @@
 <!-- Doctor Modal -->
 <div class="modal fade" id="selectDoctorModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
-        <div class="modal-content">
+        <div id="doctor-modal" class="modal-content hidden to-shown">
             <div class="modal-header">
                 <h5 class="modal-title" id="modalTitle">Pilih Dokter Pengirim</h5>
                 <button type="button" id="close-doc-btn" class="btn-close" data-bs-dismiss="modal"

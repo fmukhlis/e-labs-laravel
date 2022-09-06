@@ -25,8 +25,8 @@
                     @else
                         <input type="text" class="form-control @error('nolab') is-invalid @enderror" id="nolab"
                             name="nolab"
-                            value="{{ old('nolab', $tanggal . $bulan . Str::substr($tahun, 2, 4) . '10001') }}"
-                            required readonly>
+                            value="{{ old('nolab', $tanggal . $bulan . Str::substr($tahun, 2, 4) . '10001') }}" required
+                            readonly>
                     @endif
                     @error('nolab')
                         <div class="invalid-feedback">No. Lab tidak valid</div>
@@ -147,8 +147,7 @@
                                             @else
                                                 {{-- Jika Merupakan Bulan Ganjil --}}
                                                 @for ($i = 1; $i <= 31; $i++)
-                                                    <option
-                                                        {{ old('tanggallahir', $tanggal) == $i ? 'selected' : '' }}
+                                                    <option {{ old('tanggallahir', $tanggal) == $i ? 'selected' : '' }}
                                                         value="{{ $i }}">
                                                         {{ $i }}
                                                     </option>
@@ -159,8 +158,7 @@
                                             @if ($bulan % 2 == 0)
                                                 {{-- Jika Merupakan Bulan Genap --}}
                                                 @for ($i = 1; $i <= 31; $i++)
-                                                    <option
-                                                        {{ old('tanggallahir', $tanggal) == $i ? 'selected' : '' }}
+                                                    <option {{ old('tanggallahir', $tanggal) == $i ? 'selected' : '' }}
                                                         value="{{ $i }}">
                                                         {{ $i }}
                                                     </option>
@@ -168,8 +166,7 @@
                                             @else
                                                 {{-- Jika Merupakan Bulan Ganjil --}}
                                                 @for ($i = 1; $i <= 30; $i++)
-                                                    <option
-                                                        {{ old('tanggallahir', $tanggal) == $i ? 'selected' : '' }}
+                                                    <option {{ old('tanggallahir', $tanggal) == $i ? 'selected' : '' }}
                                                         value="{{ $i }}">
                                                         {{ $i }}
                                                     </option>
@@ -406,9 +403,6 @@
                                     {{ old('negara', session('selected_patient') == null ? '' : session('selected_patient')['negara']) === 'Indonesia' ? 'selected' : '' }}
                                     value="Indonesia">
                                     Indonesia</option>
-                                <option
-                                    {{ old('negara', session('selected_patient') == null ? '' : session('selected_patient')['negara']) === 'Luar Negeri' ? 'selected' : '' }}
-                                    value="Luar Negeri">Luar Negeri</option>
                             </select>
                         </div>
                         <div class="col-4">
@@ -491,8 +485,7 @@
                         </div>
                         <div class="col-12">
                             <textarea class="form-control @error('detailalamat') is-invalid @enderror" id="detailalamat" name="detailalamat"
-                                rows="3" placeholder="Detail Alamat" required
-                                {{ session('selected_patient') == null ? '' : 'readonly' }}>{{ old('detailalamat', session('selected_patient') == null ? '' : session('selected_patient')['alamat_detail']) }}</textarea>
+                                rows="3" placeholder="Detail Alamat" required {{ session('selected_patient') == null ? '' : 'readonly' }}>{{ old('detailalamat', session('selected_patient') == null ? '' : session('selected_patient')['alamat_detail']) }}</textarea>
                             <div class="invalid-feedback">Alamat harus diisi</div>
                         </div>
                     </div>

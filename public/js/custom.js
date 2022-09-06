@@ -8,11 +8,20 @@ $.ajaxSetup({
     }
 });
 
+function capitalize(text){
+    const words = text.split(" ");
+    for (let i = 0; i < words.length; i++){
+        if (!words[i]) continue;
+        words[i] = words[i][0].toUpperCase() + words[i].substr(1).toLowerCase();
+    }
+    return words.join(" ");
+}
+
 function hidePatientList(){
     document.querySelector('.select-field').value = '';
     setTimeout(function(){
         document.querySelector('#patient-list').classList.add('d-none');
-    }, 100);
+    }, 200);
 }
 
 function hideDoctorList(){
@@ -24,9 +33,18 @@ function hideDoctorList(){
 
 function onMetodeBayarChange(){
     if(document.querySelector('#metodebayar').value == 'BPJS'){
-        document.querySelector('#nosep').readOnly = false;
+        document.querySelector('#nosep').required = true;
+        document.querySelector('#nosep').parentElement.classList.remove('d-none');
+        setTimeout(function(){
+            document.querySelector('#nosep').parentElement.classList.add('to-shown');
+        }, 50);
     }else{
-        document.querySelector('#nosep').readOnly = true;
+        document.querySelector('#nosep').required = false;
+        document.querySelector('#nosep').parentElement.classList.remove('to-shown');
+        setTimeout(function(){
+            document.querySelector('#nosep').parentElement.classList.add('d-none');
+            document.querySelector('#nosep').value = '';
+        }, 400);
     }
 }
 
@@ -73,6 +91,12 @@ $(document).ready(function() {
 
 
     // Event Pendaftaran Registrasi
+        if(document.querySelector('.go-to-page-2')) {
+            setTimeout(() => {
+                document.querySelector('div.btn-order-next').click();
+            }, 50);
+        }
+
         // Event untuk Live Search Existing Patient
         if(document.querySelector('#patient-list')){
             document.querySelector('#patient-list').classList.add('d-none');
@@ -111,6 +135,147 @@ $(document).ready(function() {
                 }
             })
         }
+
+        // function getProvince() {
+        //     fetch('http://dsl-is.test/pendaftaran/getProvince', {
+        //         method: 'get',
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //         }
+        //     })
+        //     .then(response => {
+        //         return response.text();
+        //     })
+        //     .then(text => {
+        //         return console.log(text);
+        //     })
+        //     .catch(error => console.error(error));
+        // };
+
+        function getProvince(){
+            $.ajax({
+                url: '/pendaftaran/getProvince',
+                method: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    // Show Success Alert
+                    for(let i = 0; i < data.id_prov.length; i++){
+                        let newOpt = document.createElement('option');
+                        newOpt.value = data.id_prov[i];
+                        newOpt.innerHTML = capitalize(data.nama_prov[i]);
+                        document.querySelector('select#provinsi').appendChild(newOpt);
+                    }
+                }
+            })
+        }
+
+        function getCities(provinceId){
+            $.ajax({
+                url: '/pendaftaran/getCities',
+                method: 'GET',
+                dataType: 'json',
+                data: {
+                    provinceId: provinceId
+                },                
+                success: function(data) {
+                    // Show Success Alert
+                    for(let i = 0; i < data.id_kota.length; i++){
+                        let newOpt = document.createElement('option');
+                        newOpt.value = data.id_kota[i];
+                        newOpt.innerHTML = capitalize(data.nama_kota[i]);
+                        document.querySelector('select#kabkota').appendChild(newOpt);
+                    }
+                }
+            })
+        }
+
+        function getDistricts(cityId){
+            $.ajax({
+                url: '/pendaftaran/getDistricts',
+                method: 'GET',
+                dataType: 'json',
+                data: {
+                    cityId: cityId
+                },                
+                success: function(data) {
+                    // Show Success Alert
+                    for(let i = 0; i < data.id_kec.length; i++){
+                        let newOpt = document.createElement('option');
+                        newOpt.value = data.id_kec[i];
+                        newOpt.innerHTML = capitalize(data.nama_kec[i]);
+                        document.querySelector('select#kecamatan').appendChild(newOpt);
+                    }
+                }
+            })
+        }
+
+        function getVillage(districtId){
+            $.ajax({
+                url: '/pendaftaran/getVillages',
+                method: 'GET',
+                dataType: 'json',
+                data: {
+                    districtId: districtId
+                },                
+                success: function(data) {
+                    // Show Success Alert
+                    for(let i = 0; i < data.id_desa.length; i++){
+                        let newOpt = document.createElement('option');
+                        newOpt.value = data.id_desa[i];
+                        newOpt.innerHTML = capitalize(data.nama_desa[i]);
+                        document.querySelector('select#desa').appendChild(newOpt);
+                    }
+                }
+            })
+        }
+
+
+        document.querySelector('select#negara').addEventListener('change', function(){
+            document.querySelector('select#provinsi').innerHTML = `<option value="">Provinsi</option>`;
+            document.querySelector('select#kabkota').innerHTML = `<option value="">Kab/Kota</option>`;
+            document.querySelector('select#kecamatan').innerHTML = `<option value="">Kecamatan</option>`;
+            document.querySelector('select#desa').innerHTML = `<option value="">Desa</option>`;
+            document.querySelector('input#kodepos').value = '';
+            if(this.value != 'ID') {
+                document.querySelector('select#provinsi').disabled = true;
+                document.querySelector('select#kabkota').disabled = true;
+                document.querySelector('select#kecamatan').disabled = true;
+                document.querySelector('select#desa').disabled = true;
+                document.querySelector('input#kodepos').disabled = true;
+            }else{
+                document.querySelector('select#provinsi').disabled = false;
+                document.querySelector('select#kabkota').disabled = false;
+                document.querySelector('select#kecamatan').disabled = false;
+                document.querySelector('select#desa').disabled = false;
+                document.querySelector('input#kodepos').disabled = false;
+            }
+            if(this.value != '') getProvince();
+        });
+
+        document.querySelector('select#provinsi').addEventListener('change', function(){
+            document.querySelector('select#kabkota').innerHTML = `<option value="">Kab/Kota</option>`;
+            document.querySelector('select#kecamatan').innerHTML = `<option value="">Kecamatan</option>`;
+            document.querySelector('select#desa').innerHTML = `<option value="">Desa</option>`;
+            document.querySelector('input#kodepos').value = '';
+            let provinceId = this.value;
+            if(this.value != '') getCities(provinceId);
+        });
+
+        document.querySelector('select#kabkota').addEventListener('change', function(){
+            document.querySelector('select#kecamatan').innerHTML = `<option value="">Kecamatan</option>`;
+            document.querySelector('select#desa').innerHTML = `<option value="">Desa</option>`;
+            document.querySelector('input#kodepos').value = '';
+            let cityId = this.value;
+            if(this.value != '') getDistricts(cityId);
+        });
+
+        document.querySelector('select#kecamatan').addEventListener('change', function(){
+            document.querySelector('select#desa').innerHTML = `<option value="">Desa</option>`;
+            document.querySelector('input#kodepos').value = '';
+            let districtId = this.value;
+            if(this.value != '') getVillage(districtId);
+        });
+
     // End
 
 
@@ -118,10 +283,19 @@ $(document).ready(function() {
     // Inisialisasi Metode Bayar
     if(document.querySelector('#metodebayar')){
         if(document.querySelector('#metodebayar').value != 'BPJS'){
-            document.querySelector('#nosep').readOnly = true;
+            document.querySelector('#nosep').required = false;
+            document.querySelector('#nosep').parentElement.classList.remove('to-shown');
+            setTimeout(function(){
+                document.querySelector('#nosep').parentElement.classList.add('d-none');
+            }, 400);
+        }else{
+            document.querySelector('#nosep').required = true;
+            document.querySelector('#nosep').parentElement.classList.remove('d-none');
+            setTimeout(function(){
+                document.querySelector('#nosep').parentElement.classList.add('to-shown');
+            }, 10);
         }
     }
-
     // End
 
 
@@ -334,37 +508,42 @@ $(document).ready(function() {
         function resetDoctorModal(halaman = 0){
             isSelectDoctor = false;
             tempDoctorCode = '';
-            if(halaman == 1){
-                // Untuk reset dan pindah ke Doctor Modal Halaman 1
-                document.querySelector('h5#modalTitle').innerHTML = 'Pilih Dokter Pengirim';
-                document.querySelector('#select-doc-1').classList.remove('d-none');
-                document.querySelector('#select-doc-2').classList.add('d-none');
-                if(document.querySelector('#btn-close-doctor-alert')){
-                    document.querySelector('#btn-close-doctor-alert').click();
+            document.querySelector('div#doctor-modal').classList.remove('to-shown');
+            setTimeout(function(){
+                document.querySelector('div#doctor-modal').classList.add('to-shown');
+
+                if(halaman == 1){
+                    // Untuk reset dan pindah ke Doctor Modal Halaman 1
+                    document.querySelector('h5#modalTitle').innerHTML = 'Pilih Dokter Pengirim';
+                    document.querySelector('#select-doc-1').classList.remove('d-none');
+                    document.querySelector('#select-doc-2').classList.add('d-none');
+                    if(document.querySelector('#btn-close-doctor-alert')){
+                        document.querySelector('#btn-close-doctor-alert').click();
+                    }
+                    document.querySelector('#save-doc-btn-1').classList.add('d-none');
+                    document.querySelector('#save-doc-btn-2').classList.remove('d-none');
+                }else if (halaman == 2){
+                    // Untuk reset dan pindah ke Doctor Modal Halaman 2
+                    document.querySelector('h5#modalTitle').innerHTML = 'Tambah Dokter';
+                    document.querySelector('#select-doc-1').classList.add('d-none');
+                    document.querySelector('#select-doc-2').classList.remove('d-none');
+                    document.querySelector('#save-doc-btn-1').classList.remove('d-none');
+                    document.querySelector('#save-doc-btn-2').classList.add('d-none');
+                    document.querySelector('#error-doc-alert').classList.add('d-none');
                 }
-                document.querySelector('#save-doc-btn-1').classList.add('d-none');
-                document.querySelector('#save-doc-btn-2').classList.remove('d-none');
-            }else if (halaman == 2){
-                // Untuk reset dan pindah ke Doctor Modal Halaman 2
-                document.querySelector('h5#modalTitle').innerHTML = 'Tambah Dokter';
-                document.querySelector('#select-doc-1').classList.add('d-none');
-                document.querySelector('#select-doc-2').classList.remove('d-none');
-                document.querySelector('#save-doc-btn-1').classList.remove('d-none');
-                document.querySelector('#save-doc-btn-2').classList.add('d-none');
-                document.querySelector('#error-doc-alert').classList.add('d-none');
-            }
-            // Reset Input
-            document.querySelector('#kodedokter').value = '';
-            $('#spesialisasi option[value=""]').prop('selected', 'selected');
-            document.querySelector('#namadokter').value = '';
-            document.querySelector('#noskp').value = '';
-            document.querySelector('#nosertifskp').value = '';
-            document.querySelector('#ttddokter').value = '';
-            document.querySelector('#alamatdokter').value = '';
-            document.querySelector('#alamatpraktek').value = '';
-            document.querySelector('#notelpdokter').value = '';
-            document.querySelector('#nohpdokter').value = '';
-            document.querySelector('#emaildokter').value = '';
+                // Reset Input
+                document.querySelector('#kodedokter').value = '';
+                $('#spesialisasi option[value=""]').prop('selected', 'selected');
+                document.querySelector('#namadokter').value = '';
+                document.querySelector('#noskp').value = '';
+                document.querySelector('#nosertifskp').value = '';
+                document.querySelector('#ttddokter').value = '';
+                document.querySelector('#alamatdokter').value = '';
+                document.querySelector('#alamatpraktek').value = '';
+                document.querySelector('#notelpdokter').value = '';
+                document.querySelector('#nohpdokter').value = '';
+                document.querySelector('#emaildokter').value = '';
+            }, 425);
         }
         function resetEditDoctorModal(doctorData){
             // Reset to current data
@@ -501,6 +680,7 @@ $(document).ready(function() {
             })
         }
         function refreshTestTable(nolab){ 
+            $('tbody#testTable').html('<tr><td class="text-center" colspan="6">Loading...</td></tr>');
             document.querySelector('tbody#testTablePrice').firstElementChild.lastElementChild.innerHTML = 'Calculating...';
             document.querySelector('tbody#testTablePrice').lastElementChild.lastElementChild.innerHTML = 'Calculating...';
             $.ajax({
@@ -683,16 +863,9 @@ $(document).ready(function() {
                     recalculatePaying();
                 }
             });
-            childNode.addEventListener('click', function(e){
-                if (e.target.id == 'bayar'){ 
-                    if(e.target.value == 0) e.target.value = '';
-                    recalculatePaying();
-                }
-            });
             childNode.addEventListener('focusout', function(e){
                 if (e.target.id == 'bayar'){ 
-                    if(e.target.value == 0) e.target.value = 0;
-                    recalculatePaying();
+                   recalculatePaying();
                 }
             });
         });
@@ -706,32 +879,47 @@ $(document).ready(function() {
         function get_content_data_normal(){
             const pageNum = document.querySelector('#pagenum');
             const noLab = document.querySelector('#nolab').value;
+            document.querySelector('div#form-container').classList.remove('to-shown');
             if(pageNum.getAttribute('value') == 1){
-                document.querySelector('#content-1').classList.add('d-none');
-                document.querySelector('#content-2').classList.remove('d-none');
-                document.querySelector('#extra-1').classList.add('d-none');
-                document.querySelector('#extra-2').classList.remove('d-none');
+                setTimeout(function(){
+                    document.querySelector('div#form-container').classList.add('to-shown');
+                    document.querySelector('#content-1').classList.add('d-none');
+                    document.querySelector('#content-2').classList.remove('d-none');
+                    document.querySelector('#extra-1').classList.add('d-none');
+                    document.querySelector('#extra-2').classList.remove('d-none');
+                }, 425);
                 pageNum.setAttribute('value', 2);
                 refreshDoctorTable(noLab);
                 refreshTestTable(noLab);
             }else if (pageNum.getAttribute('value') == 2){
-                document.querySelector('#content-2').classList.add('d-none');
-                document.querySelector('#content-3').classList.remove('d-none');
+                setTimeout(function(){
+                    document.querySelector('div#form-container').classList.add('to-shown');
+                    document.querySelector('#content-2').classList.add('d-none');
+                    document.querySelector('#content-3').classList.remove('d-none');
+                    if(document.querySelector('#testTable').firstElementChild.childElementCount > 1 && document.querySelector('#doctorTable').firstElementChild.childElementCount > 1 && document.querySelector('#bayarorder').getAttribute('data-test-status') == '0') document.querySelector('#bayarorder').classList.remove('disabled');
+                }, 425);
                 pageNum.setAttribute('value', 3);
                 refreshTestTableFixed(noLab);
             }
         }
         function get_content_data_reverse(){
             const pageNum = document.querySelector('#pagenum');
+            document.querySelector('div#form-container').classList.remove('to-shown');
             if(pageNum.getAttribute('value') == 2){
-                document.querySelector('#content-2').classList.add('d-none');
-                document.querySelector('#content-1').classList.remove('d-none');
-                document.querySelector('#extra-2').classList.add('d-none');
-                document.querySelector('#extra-1').classList.remove('d-none');
+                setTimeout(function(){
+                    document.querySelector('div#form-container').classList.add('to-shown');
+                    document.querySelector('#content-2').classList.add('d-none');
+                    document.querySelector('#content-1').classList.remove('d-none');
+                    document.querySelector('#extra-2').classList.add('d-none');
+                    document.querySelector('#extra-1').classList.remove('d-none');
+                }, 425);
                 pageNum.setAttribute('value', 1);
             }else if (pageNum.getAttribute('value') == 3){
-                document.querySelector('#content-3').classList.add('d-none');
-                document.querySelector('#content-2').classList.remove('d-none');
+                setTimeout(function(){
+                    document.querySelector('div#form-container').classList.add('to-shown');
+                    document.querySelector('#content-3').classList.add('d-none');
+                    document.querySelector('#content-2').classList.remove('d-none');
+                }, 425);
                 pageNum.setAttribute('value', 2);
             }
         }

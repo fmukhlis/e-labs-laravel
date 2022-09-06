@@ -24,14 +24,38 @@
         </svg>
         @if (session()->has('status'))
             <div class="container mt-4">
-                @if (session('status'))
+                @if (session('status') == 1)
+                    <div class="alert alert-success alert-dismissible fade show go-to-page-2" role="alert">
+                        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img"
+                            aria-label="Success:">
+                            <use xlink:href="#check-circle-fill" />
+                        </svg>
+                        <b>[ {{ $current_date }} ]</b> : ({{ $test_data->no_lab }}) Data pemeriksaan pasien
+                        <b>{{ $test_data->pasien->nama }}</b>
+                        berhasil diupdate !
+                        <button type="button" class="btn-close" id="auto-cls" data-bs-dismiss="alert"
+                            aria-label="Close"></button>
+                    </div>
+                @elseif (session('status') == 2)
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                         <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img"
                             aria-label="Success:">
                             <use xlink:href="#check-circle-fill" />
                         </svg>
-                        <b>[ {{ $current_date }} ]</b> : Data pasien
-                        <b>{{ $test_data->pasien->nama }}</b> berhasil diupdate !
+                        <b>[ {{ $current_date }} ]</b> : Data pasien <b>{{ $test_data->pasien->nama }}</b> berhasil
+                        diupdate !
+                        <button type="button" class="btn-close" id="auto-cls" data-bs-dismiss="alert"
+                            aria-label="Close"></button>
+                    </div>
+                @elseif (session('status') == 99)
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img"
+                            aria-label="Danger:">
+                            <use xlink:href="#exclamation-triangle-fill" />
+                        </svg>
+                        <b>[ {{ $current_date }} ]</b> : Data pemeriksaan pasien
+                        <b>{{ $test_data->pasien->nama }}</b> sudah terkonfirmasi,
+                        tidak bisa melakukan update.
                         <button type="button" class="btn-close" id="auto-cls" data-bs-dismiss="alert"
                             aria-label="Close"></button>
                     </div>
@@ -41,13 +65,13 @@
                             <use xlink:href="#info-fill" />
                         </svg>
                         <b>[ {{ $current_date }} ]</b> : ( {{ $test_data->no_lab }} ) Data pemeriksaan pasien
-                        <b>{{ $test_data->pasien->nama }}</b> berhasil dihapus !
+                        <b>{{ $test_data->no_lab }}</b> berhasil dihapus !
                         <button type="button" class="btn-close" id="auto-cls" data-bs-dismiss="alert"
                             aria-label="Close"></button>
                     </div>
                 @endif
         @endif
-        <div class="container mt-4 mb-4 shadow">
+        <div id="form-container" class="container mt-4 mb-4 shadow hidden to-shown">
             <div class="row bg-light pt-4">
                 <h4 class="col-8">
                     Order Pemeriksaan
@@ -70,7 +94,8 @@
                         <label for="validationCustom01" class="col-6 col-form-label text-end">Tgl. Pemeriksaan</label>
                         <div class="col-6">
                             <input type="text" class="form-control text-center" id="validationCustom01"
-                                value="{{ $tanggal }} / {{ $bulan }} / {{ $tahun }}" disabled>
+                                value="{{ Str::substr($test_data->created_at, 8, 2) }} / {{ Str::substr($test_data->created_at, 5, 2) }} / {{ Str::substr($test_data->created_at, 0, 4) }}"
+                                disabled>
                         </div>
                     </div>
                 </div>

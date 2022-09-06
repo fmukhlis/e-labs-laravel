@@ -22,6 +22,7 @@ class CreatePeriksasTable extends Migration
             $table->string('metode_bayar')->nullable();
             $table->string('no_sep')->nullable();
             $table->boolean('home_service');
+            $table->smallinteger('is_done');
             $table->timestamps();
         });
     }

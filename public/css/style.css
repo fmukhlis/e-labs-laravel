@@ -2,6 +2,14 @@ body.default-body {
     background-color: whitesmoke;
 }
 
+.hidden {
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+.hidden.to-shown {
+    opacity: 1;
+}
+
 /* Main Menu */
 div.card img.card-img,
 div.card-img-overlay {

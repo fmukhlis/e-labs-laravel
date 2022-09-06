@@ -1,4 +1,4 @@
-<form action="/pendaftaran/{{ $test_data->no_lab }}/order" method="post" enctype="multipart/form-data">
+<form action="/pendaftaran/{{ $test_data->pasien->no_rm }}/pasien" method="post" enctype="multipart/form-data">
     @method('put')
     @csrf
     {{-- Row1 --}}
@@ -52,8 +52,8 @@
                     <div class="col-12">
                         <label for="namapasien" class="form-label">Nama Pasien</label>
                         <input type="text" class="form-control @error('namapasien') is-invalid @enderror"
-                            id="namapasien" name="namapasien"
-                            value="{{ old('namapasien', $test_data->pasien->nama) }}" required>
+                            id="namapasien" name="namapasien" value="{{ old('namapasien', $test_data->pasien->nama) }}"
+                            required>
                         @error('namapasien')
                             <div class="invalid-feedback">Nama Pasien harus diisi</div>
                         @enderror
@@ -253,94 +253,134 @@
                         </div>
                     </div>
                     <div class="col-12">
+                        @php
+                            $curl = curl_init();
+                            curl_setopt_array($curl, [
+                                CURLOPT_URL => 'https://api.countrystatecity.in/v1/countries',
+                                CURLOPT_RETURNTRANSFER => true,
+                                CURLOPT_HTTPHEADER => ['X-CSCAPI-KEY: ZHlNZTd0bDdvSXVGSzI2WXVxbVN4SWFGR1NGZm1lZ1RmaFJ0VElUcA=='],
+                            ]);
+                            $response = curl_exec($curl);
+                            curl_close($curl);
+                            $countries = json_decode($response, true);
+                        @endphp
                         <label for="alamatpasien" class="form-label">Alamat Pasien</label>
                         <div class="row g-2">
                             <div class="col-4">
                                 <select class="form-select" id="negara" name="negara">
-                                    <option {{ old('negara', $test_data->pasien->negara) === '' ? 'selected' : '' }}
-                                        value="">
-                                        Negara</option>
-                                    <option
-                                        {{ old('negara', $test_data->pasien->negara) === 'Indonesia' ? 'selected' : '' }}
-                                        value="Indonesia">
-                                        Indonesia</option>
-                                    <option
-                                        {{ old('negara', $test_data->pasien->negara) === 'Luar Negeri' ? 'selected' : '' }}
-                                        value="Luar Negeri">Luar Negeri</option>
+                                    <option {{ old('negara', $test_data->pasien->negara) === 'ID' ? 'selected' : '' }}
+                                        value="ID">Indonesia</option>
+                                    @foreach ($countries as $country)
+                                        @if ($country['iso2'] == 'ID')
+                                            @continue;
+                                        @endif
+                                        <option
+                                            {{ old('negara', $test_data->pasien->negara) === $country['iso2'] ? 'selected' : '' }}
+                                            value="{{ $country['iso2'] }}">{{ $country['name'] }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div class="col-4">
-                                <select class="form-select" id="provinsi" name="provinsi">
+                                <select class="form-select" id="provinsi" name="provinsi"
+                                    {{ old('negara', $test_data->pasien->negara) !== 'ID' ? 'disabled' : '' }}>
                                     <option {{ old('provinsi', $test_data->pasien->prov) === '' ? 'selected' : '' }}
-                                        value="">
-                                        Provinsi
-                                    </option>
-                                    <option
-                                        {{ old('provinsi', $test_data->pasien->prov) === 'Bekasi' ? 'selected' : '' }}
-                                        value="Bekasi">
-                                        Bekasi
-                                    </option>
-                                    <option
-                                        {{ old('provinsi', $test_data->pasien->prov) === 'Jakarta' ? 'selected' : '' }}
-                                        value="Jakarta">
-                                        Jakarta
-                                    </option>
+                                        value="">Provinsi</option>
+                                    @if (old('negara', $test_data->pasien->negara) === 'ID')
+                                        @php
+                                            $provinces = DB::table('t_provinsi')->get();
+                                        @endphp
+                                        @foreach ($provinces as $province)
+                                            <option
+                                                {{ old('provinsi', $test_data->pasien->prov) === $province->id ? 'selected' : '' }}
+                                                value="{{ $province->id }}">
+                                                {{ ucwords(strtolower($province->nama)) }}
+                                            </option>
+                                        @endforeach
+                                    @endif
                                 </select>
                             </div>
                             <div class="col-4">
-                                <select class="form-select" id="kabkota" name="kabkota">
-                                    <option
-                                        {{ old('kabkota', $test_data->pasien->kab_kota) === '' ? 'selected' : '' }}
+                                <select class="form-select" id="kabkota" name="kabkota"
+                                    {{ old('negara', $test_data->pasien->negara) !== 'ID' ? 'disabled' : '' }}>
+                                    <option {{ old('kabkota', $test_data->pasien->kab_kota) === '' ? 'selected' : '' }}
                                         value="">Kab/Kota
                                     </option>
-                                    <option
-                                        {{ old('kabkota', $test_data->pasien->kab_kota) === 'Kab. Tangerang' ? 'selected' : '' }}
-                                        value="Kab. Tangerang">
-                                        Kab. Tangerang</option>
-                                    <option
-                                        {{ old('kabkota', $test_data->pasien->kab_kota) === 'Kab. Serang' ? 'selected' : '' }}
-                                        value="Kab. Serang">
-                                        Kab. Serang</option>
+                                    @if (old('provinsi', $test_data->pasien->prov))
+                                        @php
+                                            $idProvinsi = $test_data->pasien->prov;
+                                            if (old('provinsi')) {
+                                                $idProvinsi = old('provinsi');
+                                            }
+                                            $cities = DB::table('t_kota')
+                                                ->where('id', 'LIKE', $idProvinsi . '%')
+                                                ->get();
+                                        @endphp
+                                        @foreach ($cities as $city)
+                                            <option
+                                                {{ old('kabkota', $test_data->pasien->kab_kota) === $city->id ? 'selected' : '' }}
+                                                value="{{ $city->id }}">
+                                                {{ ucwords(strtolower($city->nama)) }}
+                                            </option>
+                                        @endforeach
+                                    @endif
                                 </select>
                             </div>
                             <div class="col-4">
-                                <select class="form-select" id="kecamatan" name="kecamatan">
+                                <select class="form-select" id="kecamatan" name="kecamatan"
+                                    {{ old('negara', $test_data->pasien->negara) !== 'ID' ? 'disabled' : '' }}>
                                     <option
                                         {{ old('kecamatan', $test_data->pasien->kecamatan) === '' ? 'selected' : '' }}
                                         value="">Kecamatan
                                     </option>
-                                    <option
-                                        {{ old('kecamatan', $test_data->pasien->kecamatan) === 'Balaraja' ? 'selected' : '' }}
-                                        value="Balaraja">
-                                        Balaraja</option>
-                                    <option
-                                        {{ old('kecamatan', $test_data->pasien->kecamatan) === 'Cikupa' ? 'selected' : '' }}
-                                        value="Cikupa">
-                                        Cikupa
-                                    </option>
-                                    <option
-                                        {{ old('kecamatan', $test_data->pasien->kecamatan) === 'Cisauk' ? 'selected' : '' }}
-                                        value="Cisauk">
-                                        Cisauk
-                                    </option>
+                                    @if (old('kabkota', $test_data->pasien->kab_kota))
+                                        @php
+                                            $idKota = $test_data->pasien->kab_kota;
+                                            if (old('kabkota')) {
+                                                $idProvinsi = old('kabkota');
+                                            }
+                                            $districts = DB::table('t_kecamatan')
+                                                ->where('id', 'LIKE', $idKota . '%')
+                                                ->get();
+                                        @endphp
+                                        @foreach ($districts as $district)
+                                            <option
+                                                {{ old('kecamatan', $test_data->pasien->kecamatan) === $district->id ? 'selected' : '' }}
+                                                value="{{ $district->id }}">
+                                                {{ ucwords(strtolower($district->nama)) }}
+                                            </option>
+                                        @endforeach
+                                    @endif
                                 </select>
                             </div>
                             <div class="col-4">
-                                <select class="form-select" id="desa" name="desa">
+                                <select class="form-select" id="desa" name="desa"
+                                    {{ old('negara', $test_data->pasien->negara) !== 'ID' ? 'disabled' : '' }}>
                                     <option {{ old('desa', $test_data->pasien->desa) === '' ? 'selected' : '' }}
                                         value="">
                                         Desa</option>
-                                    <option {{ old('desa', $test_data->pasien->desa) === 'Saga' ? 'selected' : '' }}
-                                        value="Saga">Saga
-                                    </option>
-                                    <option
-                                        {{ old('desa', $test_data->pasien->desa) === 'Talagasari' ? 'selected' : '' }}
-                                        value="Talagasari">
-                                        Talagasari</option>
+                                    @if (old('kecamatan', $test_data->pasien->kecamatan))
+                                        @php
+                                            $idKecamatan = $test_data->pasien->kecamatan;
+                                            if (old('kecamatan')) {
+                                                $idProvinsi = old('kecamatan');
+                                            }
+                                            $villages = DB::table('t_kelurahan')
+                                                ->where('id', 'LIKE', $idKecamatan . '%')
+                                                ->get();
+                                        @endphp
+                                        @foreach ($villages as $village)
+                                            <option
+                                                {{ old('desa', $test_data->pasien->desa) === $village->id ? 'selected' : '' }}
+                                                value="{{ $village->id }}">
+                                                {{ ucwords(strtolower($village->nama)) }}
+                                            </option>
+                                        @endforeach
+                                    @endif
                                 </select>
                             </div>
                             <div class="col-4">
                                 <input type="text" class="form-control" id="kodepos" name="kodepos"
+                                    {{ old('negara', $test_data->pasien->negara) !== 'ID' ? 'disabled' : '' }}
                                     value="{{ old('kodepos', $test_data->pasien->kode_pos) }}"
                                     placeholder="Kode Pos">
                             </div>

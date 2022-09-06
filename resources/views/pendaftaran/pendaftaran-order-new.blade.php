@@ -33,14 +33,13 @@
                 </svg>
                 @if (session('status'))
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+                        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img"
+                            aria-label="Success:">
                             <use xlink:href="#check-circle-fill" />
                         </svg>
                         <b>[ {{ $current_date }} ]</b> : ({{ session('nolab') }}) Data pemeriksaan pasien
-                        <b>{{ session('namapasien') }}</b> berhasil
-                        ditambahkan ! --- <a class="text-success"
-                            href="/pendaftaran/{{ session('nolab') }}/order">Select</a>
-                        ---
+                        <b>{{ session('namapasien') }}</b> berhasil ditambahkan ! --- <a class="text-success"
+                            href="/pendaftaran/{{ session('nolab') }}/order">Select</a> ---
                         <button type="button" class="btn-close" id="auto-cls" data-bs-dismiss="alert"
                             aria-label="Close"></button>
                     </div>

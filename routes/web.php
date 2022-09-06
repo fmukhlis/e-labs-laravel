@@ -31,9 +31,17 @@ Route::post('/pendaftaran/order', [PendaftaranController::class, 'store']);
 Route::put('/pendaftaran/{periksa:no_lab}/order', [PendaftaranController::class, 'update']);
 Route::delete('/pendaftaran/{periksa:no_lab}/order', [PendaftaranController::class, 'destroy']);
 
-// AJAX ROUTE
+Route::put('/pendaftaran/{pasien:no_rm}/pasien', [PendaftaranController::class, 'updatePatient']);
 
-// Live Search
+// AJAX ROUTE
+// Patient Location
+Route::get('/pendaftaran/getProvince', [PendaftaranController::class, 'getProvince']);
+Route::get('/pendaftaran/getCities', [PendaftaranController::class, 'getCities']);
+Route::get('/pendaftaran/getDistricts', [PendaftaranController::class, 'getDistricts']);
+Route::get('/pendaftaran/getVillages', [PendaftaranController::class, 'getVillages']);
+
+
+// Live Search/pendaftaran/getProvince
 Route::get('/pendaftaran/func/searchResTable', [PendaftaranController::class, 'searchResTable'])->name('pendaftaran.func.searchResTable');
 Route::get('/pendaftaran/func/getPatientData', [PendaftaranController::class, 'getPatientData'])->name('pendaftaran.func.getPatientData');
 Route::get('/pendaftaran/func/getDoctorData', [PendaftaranController::class, 'getDoctorData'])->name('pendaftaran.func.getDoctorData');

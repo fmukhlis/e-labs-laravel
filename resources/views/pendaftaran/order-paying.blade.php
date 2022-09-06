@@ -103,7 +103,8 @@
                     <label class="col-6 col-form-label">Metode Pembayaran</label>
                     <div class="col-6">
                         <select class="form-select" disabled>
-                            <option>Cash</option>
+                            <option {{ $test_data->metode_bayar == 'Cash' ? 'selected' : '' }}>Cash</option>
+                            <option {{ $test_data->metode_bayar == 'BPJS' ? 'selected' : '' }}>BPJS</option>
                         </select>
                     </div>
 
@@ -115,8 +116,9 @@
                     <label for="bayar" class="col-5 col-form-label">Bayar <small class="text-muted">(Rp.
                             )</small></label>
                     <div class="col-7">
-                        <input type="text" id="bayar" class="form-control text-end" name="bayar" value="0"
-                            onkeypress="return onlyNumInput(event)">
+                        <input type="text" id="bayar" class="form-control text-end" name="bayar"
+                            onkeypress="return onlyNumInput(event)" placeholder="0"
+                            {{ $test_data->metode_bayar == 'BPJS' ? 'readonly' : '' }}>
                     </div>
 
                     <label class="col-5 col-form-label">Kekurangan <small class="text-muted">(Rp. )</small></label>
@@ -130,7 +132,8 @@
                     <div class="btn btn-secondary col-5 mt-4">
                         Pengembalian
                     </div>
-                    <div class="btn btn-success col-12">
+                    <div id="bayarorder" class="btn btn-success col-12 disabled" data-bs-toggle="modal"
+                        data-bs-target="#modalBayar" data-test-status="{{ $test_data->is_done }}">
                         Bayar
                     </div>
                     {{-- <div class="btn btn-success col-12">
@@ -192,3 +195,26 @@
         </div>
     </div>
 </form>
+
+<div class="modal fade" id="modalBayar" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <h4 class="modal-title text-center pb-3">Confirmation</h4>
+                        <hr>
+                        <div class="col-12 px-0 text-center">
+                            <form action="/pendaftaran/{{ $test_data->no_lab }}/order" method="post">
+                                @method('put')
+                                @csrf
+                                <input class="d-none" name="is_confirm" hidden value="ok">
+                                <button type="button" id="cancel-doc-btn" class="btn btn-secondary"
+                                    data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-success">Confirm</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>

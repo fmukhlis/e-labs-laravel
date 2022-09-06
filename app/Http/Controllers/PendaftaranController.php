@@ -20,6 +20,7 @@ use Mockery\Generator\StringManipulation\Pass\Pass;
 use SebastianBergmann\Environment\Console;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use LengthException;
 
 class PendaftaranController extends Controller
 {
@@ -28,6 +29,7 @@ class PendaftaranController extends Controller
         // $datas = Periksa::with('pasien')->with('dokter')->whereHas('dokter', function (Builder $query) use ($doctorFilt) {
         //     dd($query);
         // })->orderBy('created_at', 'ASC')->skip(0)->take(20)->get();
+
         return view('pendaftaran/pendaftaran-index', [
             "title" => "Pendaftaran",
             "sub_title" => "semua-pemeriksaan",
@@ -90,7 +92,6 @@ class PendaftaranController extends Controller
                 'alamat_detail' => $validatedData['detailalamat'],
                 'tempat_lahir' => $validatedData['tempatlahir'],
                 'foto_pasien' => $validatedData['fotopasien'],
-
                 'tanggal_lahir' => $request->get('tahunlahir') . '-' . $request->get('bulanlahir') . '-' . $request->get('tanggallahir'),
                 'agama' => $request->get('agama'),
                 'status' => $request->get('status'),
@@ -117,7 +118,8 @@ class PendaftaranController extends Controller
             'no_lab' => $validatedData['nolab'],
             'pasien_id' => Pasien::where('no_rm', $validatedData['norm'])->pluck('id')[0],
             'dokter_id' => 0,
-            'home_service' => 0
+            'home_service' => 0,
+            'is_done' => 0
         ]);
 
         return redirect('/pendaftaran/order')->with('status',  1)->with('namapasien',  $validatedData['namapasien'])->with('nolab', $validatedData['nolab']);
@@ -126,12 +128,13 @@ class PendaftaranController extends Controller
     public function update(Request $request, Periksa $periksa)
     {
         if ($request->ajax()) {
+            if ($periksa->is_done != 0) return;
             // Validation
             $rules = [
                 'kode' => ['exists:dokters,kode']
             ];
             $validatedData = $request->validate($rules);
-            // Add/Update Doctor Validated Data to 'periksas' table
+            // Update Doctor Validated Data to 'periksas' table
             if ($request->get('isRemove') === 'true') {
                 Periksa::where('id', '=', $periksa->id)->update([
                     'dokter_id' => 0
@@ -141,85 +144,94 @@ class PendaftaranController extends Controller
                     'dokter_id' => Dokter::where('kode', $validatedData['kode'])->pluck('id')[0]
                 ]);
             }
-            // Send random data back
-            $datas = array(
-                'random' => ''
-            );
-            echo json_encode($datas);
         } else {
-            $rules = [
-                'namapasien' => ['required'],
-                'tempatlahir' => ['required'],
-                'jeniskelamin' => ['required'],
-                'fotopasien' => ['image', 'file', 'max:1024'],
-                'detailalamat' => ['required']
-            ];
-
-            if ($request->get('nolab') != $periksa->no_lab) {
-                $rules['nolab'] = 'required|numeric|unique:periksas,no_lab';
+            if ($periksa->is_done != 0) return redirect('/pendaftaran/' . $periksa->no_lab . '/order')->with('status',  99);
+            if ($request->get('is_confirm')) {
+                Periksa::where('id', '=', $periksa->id)->update([
+                    'is_done' => -1
+                ]);
+                return redirect('/pendaftaran/');
+            };
+            if ($request->get('metodebayar')) {
+                $rules = [
+                    'asalruangan' => ['required'],
+                    'homeservice' => ['nullable']
+                ];
+                if ($request->get('metodebayar') == 'BPJS') $rules['nosep'] = ['required', 'numeric'];
+                else $rules['nosep'] = ['nullable'];
+                $validatedData = $request->validate($rules);
+                if (!$request->get('homeservice')) $validatedData['homeservice'] = 0;
+                Periksa::where('id', '=', $periksa->id)->update([
+                    'asal_ruangan' => $validatedData['asalruangan'],
+                    'metode_bayar' => $request->get('metodebayar'),
+                    'no_sep' => $validatedData['nosep'],
+                    'home_service' => $validatedData['homeservice']
+                ]);
+                return redirect('/pendaftaran/' . $periksa->no_lab . '/order')->with('status',  1);
             } else {
-                $rules['nolab'] = 'required|numeric';
             }
-            if ($request->get('norm') != $periksa->pasien->no_rm) {
-                $rules['norm'] = 'required|numeric|unique:pasiens,no_rm';
-            } else {
-                $rules['norm'] = 'required|numeric';
-            }
-            if ($request->get('noktp') != $periksa->pasien->no_ktp) {
-                $rules['noktp'] = 'required|numeric|unique:pasiens,no_ktp';
-            } else {
-                $rules['noktp'] = 'required|numeric';
-            }
-
-            $validatedData = $request->validate($rules);
-
-            if ($request->file('fotopasien')) {
-                $currentPhoto = $periksa->pasien->foto_pasien;
-                if ($currentPhoto) Storage::delete($currentPhoto);
-                $validatedData['fotopasien'] = $request->file('fotopasien')->store('profilePhoto');
-            } else $validatedData['fotopasien'] = $periksa->pasien->foto_pasien;
-
-            Pasien::where('id', '=', $periksa->pasien->id)->update([
-                'no_rm' => $validatedData['norm'],
-                'no_ktp' => $validatedData['noktp'],
-                'nama' => $validatedData['namapasien'],
-                'tanggal_lahir' => $request->get('tahunlahir') . '-' . $request->get('bulanlahir') . '-' . $request->get('tanggallahir'),
-                'jenis_kelamin' => $validatedData['jeniskelamin'],
-                'alamat_detail' => $validatedData['detailalamat'],
-                'tempat_lahir' => $validatedData['tempatlahir'],
-                'foto_pasien' => $validatedData['fotopasien'],
-                'agama' => $request->get('agama'),
-                'status' => $request->get('status'),
-                'pendidikan' => $request->get('pendidikanterakhir'),
-                'pekerjaan' => $request->get('pekerjaan'),
-                'nama_ibu' => $request->get('namaibupasien'),
-                'negara' => $request->get('negara'),
-                'prov' => $request->get('provinsi'),
-                'kab_kota' => $request->get('kabkota'),
-                'kecamatan' => $request->get('kecamatan'),
-                'desa' => $request->get('desa'),
-                'pangkat_gol' => $request->get('pangkatgolongan'),
-                'kesatuan' => $request->get('kesatuan'),
-                'NRP' => $request->get('nrp'),
-                'no_hp' => $request->get('nohp'),
-                'no_telp' => $request->get('notelp'),
-                'fax' => $request->get('fax'),
-                'email' => $request->get('email')
-            ]);
-
-            // Periksa::where('id', '=', $periksa->id)->update([
-            //     'no_lab' => $validatedData['nolab'],
-            //     'pasien_id' => Pasien::where('no_rm', $validatedData['norm'])->pluck('id')[0],
-            // ]);
-
-            return redirect('/pendaftaran/' . $validatedData['nolab'] . '/order')->with('status',  2)->with('namapasien',  $validatedData['namapasien'])->with('nolab', $validatedData['nolab']);
         }
     }
 
     public function destroy(Periksa $periksa)
     {
+        if ($periksa->is_done != 0) return redirect('/pendaftaran/' . $periksa->no_lab . '/order')->with('status',  99);
         Periksa::destroy($periksa->id);
         return redirect('/pendaftaran/order')->with('status',  0)->with('namapasien',  $periksa->pasien->nama)->with('nolab', $periksa->no_lab);
+    }
+
+    public function updatePatient(Request $request, Pasien $pasien)
+    {
+        $rules = [
+            'namapasien' => ['required'],
+            'tempatlahir' => ['required'],
+            'jeniskelamin' => ['required'],
+            'fotopasien' => ['image', 'file', 'max:1024'],
+            'detailalamat' => ['required']
+        ];
+        if ($request->get('noktp') != $pasien->no_ktp) {
+            $rules['noktp'] = 'required|numeric|unique:pasiens,no_ktp';
+        } else {
+            $rules['noktp'] = 'required|numeric';
+        }
+
+        $validatedData = $request->validate($rules);
+
+        if ($request->file('fotopasien')) {
+            $currentPhoto = $pasien->foto_pasien;
+            if ($currentPhoto) Storage::delete($currentPhoto);
+            $validatedData['fotopasien'] = $request->file('fotopasien')->store('profilePhoto');
+        } else $validatedData['fotopasien'] = $pasien->foto_pasien;
+
+        Pasien::where('id', '=', $pasien->id)->update([
+            'no_ktp' => $validatedData['noktp'],
+            'nama' => $validatedData['namapasien'],
+            'tanggal_lahir' => $request->get('tahunlahir') . '-' . $request->get('bulanlahir') . '-' . $request->get('tanggallahir'),
+            'jenis_kelamin' => $validatedData['jeniskelamin'],
+            'alamat_detail' => $validatedData['detailalamat'],
+            'tempat_lahir' => $validatedData['tempatlahir'],
+            'foto_pasien' => $validatedData['fotopasien'],
+            'agama' => $request->get('agama'),
+            'status' => $request->get('status'),
+            'pendidikan' => $request->get('pendidikanterakhir'),
+            'pekerjaan' => $request->get('pekerjaan'),
+            'nama_ibu' => $request->get('namaibupasien'),
+            'negara' => $request->get('negara'),
+            'prov' => $request->get('provinsi'),
+            'kab_kota' => $request->get('kabkota'),
+            'kecamatan' => $request->get('kecamatan'),
+            'desa' => $request->get('desa'),
+            'kode_pos' => $request->get('kodepos'),
+            'pangkat_gol' => $request->get('pangkatgolongan'),
+            'kesatuan' => $request->get('kesatuan'),
+            'NRP' => $request->get('nrp'),
+            'no_hp' => $request->get('nohp'),
+            'no_telp' => $request->get('notelp'),
+            'fax' => $request->get('fax'),
+            'email' => $request->get('email')
+        ]);
+
+        return redirect('/pendaftaran/' .  $request->get('nolab') . '/order')->with('status',  2)->with('namapasien',  $validatedData['namapasien'])->with('nolab', $request->get('nolab'));
     }
 
     // AJAX HANDLER
@@ -376,9 +388,14 @@ class PendaftaranController extends Controller
                         $dokter = '-';
                         if ($data->dokter->nama != '-') $dokter = 'dr. ' . $data->dokter->nama . ', ' . $data->dokter->spesialisasi;
                     } else $dokter = 'dr. ' . substr($data->dokter->nama, 0, 19) . '...' . ', ' . $data->dokter->spesialisasi;
+                    $btn_class = '';
+                    $data->is_done == '0' ? $btn_class = 'btn btn-secondary' : $btn_class = 'btn btn-success';
+                    if ($data->is_done == -1) {
+                        $btn_class = 'btn btn-primary';
+                    }
                     $output .= "
                         <tr class='align-middle'>
-                            <td class='text-center'><a class='btn btn-success p-1 pt-0 pb-0' href='/pendaftaran/" . $data->no_lab . "/order'><small>Select</small></a></td>
+                            <td class='text-center'><a class='" . $btn_class . " p-1 pt-0 pb-0' href='/pendaftaran/" . $data->no_lab . "/order'><small>Select</small></a></td>
                             <td>" . $data->no_lab . "</td>
                             <td>" . $data->pasien->nama . "</td>
                             <td>" . $data->created_at . "</td>
@@ -407,7 +424,6 @@ class PendaftaranController extends Controller
     // Src : pendaftaran-order-new order-reg-new
     public function getPatientData(Request $req)
     {
-
         if ($req->ajax()) {
             $output = '';
             $isNull = true;
@@ -459,6 +475,82 @@ class PendaftaranController extends Controller
                 'table_data' => $output
             );
 
+            echo json_encode($datas);
+        }
+    }
+
+    // Src : pendaftaran-order order-reg
+    public function getProvince(Request $request)
+    {
+        if ($request->ajax()) {
+            $provinces = DB::table('t_provinsi')->get();
+            $id = array();
+            $name = array();
+            foreach ($provinces as $province) {
+                array_push($id, $province->id);
+                array_push($name, $province->nama);
+            }
+            $datas = array(
+                'id_prov' => $id,
+                'nama_prov' => $name
+            );
+            echo json_encode($datas);
+        }
+    }
+
+    // Src : pendaftaran-order order-reg
+    public function getCities(Request $request)
+    {
+        if ($request->ajax()) {
+            $cities = DB::table('t_kota')->where('id', 'LIKE', $request->provinceId . '%')->get();
+            $id = array();
+            $name = array();
+            foreach ($cities as $city) {
+                array_push($id, $city->id);
+                array_push($name, $city->nama);
+            }
+            $datas = array(
+                'id_kota' => $id,
+                'nama_kota' => $name
+            );
+            echo json_encode($datas);
+        }
+    }
+
+    // Src : pendaftaran-order order-reg
+    public function getDistricts(Request $request)
+    {
+        if ($request->ajax()) {
+            $districts = DB::table('t_kecamatan')->where('id', 'LIKE', $request->cityId . '%')->get();
+            $id = array();
+            $name = array();
+            foreach ($districts as $district) {
+                array_push($id, $district->id);
+                array_push($name, $district->nama);
+            }
+            $datas = array(
+                'id_kec' => $id,
+                'nama_kec' => $name
+            );
+            echo json_encode($datas);
+        }
+    }
+
+    // Src : pendaftaran-order order-reg
+    public function getVillages(Request $request)
+    {
+        if ($request->ajax()) {
+            $villages = DB::table('t_kelurahan')->where('id', 'LIKE', $request->districtId . '%')->get();
+            $id = array();
+            $name = array();
+            foreach ($villages as $village) {
+                array_push($id, $village->id);
+                array_push($name, $village->nama);
+            }
+            $datas = array(
+                'id_desa' => $id,
+                'nama_desa' => $name
+            );
             echo json_encode($datas);
         }
     }
@@ -559,7 +651,7 @@ class PendaftaranController extends Controller
                 'nama' => ['required'],
                 'no_skp' => ['nullable'],
                 'no_sertif_skp' => ['nullable'],
-                'ttd' => ['nullable', 'image', 'file', 'max:1024'],
+                'ttd' => ['image', 'file', 'max:1024'],
                 'alamat' => ['required'],
                 'alamat_praktek' => ['nullable'],
                 'no_telp' => ['nullable'],
@@ -647,6 +739,7 @@ class PendaftaranController extends Controller
     // Src : pendaftaran-order order-test
     public function syncOrderTest(Request $req, Periksa $periksa)
     {
+        if ($periksa->is_done != 0) return;
         if ($req->ajax()) {
             $rules = [
                 'testCode' => ['exists:pemeriksaans,kode']
