@@ -2,16 +2,16 @@
 
 @section('content')
     @php
-    $tanggal = (int) Str::substr($current_date, 8, 2);
-    $bulan = (int) Str::substr($current_date, 5, 2);
-    $tahun = (int) Str::substr($current_date, 0, 4);
-
-    if (strlen($tanggal) != 2) {
-        $tanggal = '0' . $tanggal;
-    }
-    if (strlen($bulan) != 2) {
-        $bulan = '0' . $bulan;
-    }
+        $tanggal = (int) Str::substr($current_date, 8, 2);
+        $bulan = (int) Str::substr($current_date, 5, 2);
+        $tahun = (int) Str::substr($current_date, 0, 4);
+        
+        if (strlen($tanggal) != 2) {
+            $tanggal = '0' . $tanggal;
+        }
+        if (strlen($bulan) != 2) {
+            $bulan = '0' . $bulan;
+        }
     @endphp
     <!-- Order Page -->
     <section id="pendaftaran-menu">
@@ -62,7 +62,7 @@
                 <h4 class="col-8">
                     Order Pemeriksaan
                 </h4>
-                <div id="extra-1" class="col-3 offset-1">
+                <div id="extra-1" class="col-3 offset-1 ">
                     <input name="search" class="form-control select-field" type="text" placeholder="Select patient..."
                         aria-label="Search" onfocusout="hidePatientList()" autocomplete="off">
 
@@ -73,7 +73,7 @@
                 </div>
             </div>
 
-            <div id="content-1">
+            <div id="content-1" class="{{ session('selected_patient') ? 'readOnlyEl' : '' }}">
                 @include('pendaftaran/order-reg-new')
             </div>
         </div>

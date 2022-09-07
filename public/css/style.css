@@ -10,6 +10,39 @@ body.default-body {
     opacity: 1;
 }
 
+.readOnlyEl{
+    position: relative;
+}
+
+.readOnlyEl::before {
+    content: '';
+    background-image: url('../assets/data_unchangeable_icon.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 33% 40%;
+    display: block;
+    position: absolute;
+    background-color: rgba(240, 240, 240, 1);
+    border-radius: 10px;
+    border: 0.2rem solid lightgray;
+    width: 101%;
+    height: 85%;
+    margin-top: 1.35rem;
+    margin-left: -0.35rem;
+    z-index: 9;
+    opacity: 1;
+    transition: ease-out 0.3s;
+}
+
+.readOnlyEl:hover::before {
+    width: 105%;
+    height: 85%;
+    margin-top: 1.35rem;
+    margin-left: -1.75rem;
+    opacity: 0.5;
+}
+
+
 /* Main Menu */
 div.card img.card-img,
 div.card-img-overlay {
@@ -144,7 +177,7 @@ div.modal div.modal-body span.text-danger {
 
 /* Order Pemeriksaan */
 div#extra-1 div.card {
-    z-index: 1;
+    z-index: 10;
     min-width: 261px;
 }
 

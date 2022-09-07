@@ -58,7 +58,7 @@
                     <input type="text" class="form-control @error('noktp') is-invalid @enderror" id="noktp"
                         name="noktp"
                         value="{{ old('noktp', session('selected_patient') == null ? '' : session('selected_patient')['no_ktp']) }}"
-                        required {{ session('selected_patient') == null ? '' : 'readonly' }}>
+                        required>
                     <div class="valid-feedback"></div>
                     @error('noktp')
                         <div class="invalid-feedback">No. KTP tidak valid</div>
@@ -88,7 +88,7 @@
                         <input type="text" class="form-control @error('namapasien') is-invalid @enderror"
                             id="namapasien" name="namapasien"
                             value="{{ old('namapasien', session('selected_patient') == null ? '' : session('selected_patient')['nama']) }}"
-                            required {{ session('selected_patient') == null ? '' : 'readonly' }}>
+                            required>
                         @error('namapasien')
                             <div class="invalid-feedback">Nama Pasien harus diisi</div>
                         @enderror
@@ -101,7 +101,7 @@
                                 <input type="text" class="form-control @error('tempatlahir') is-invalid @enderror"
                                     id="tempatlahir" name="tempatlahir"
                                     value="{{ old('tempatlahir', session('selected_patient') == null ? '' : session('selected_patient')['tempat_lahir']) }}"
-                                    {{ session('selected_patient') == null ? '' : 'readonly' }} required>
+                                    required>
                                 @error('tempatlahir')
                                     <div class="invalid-feedback">Tempat / Tanggal Lahir harus diisi</div>
                                 @enderror
@@ -309,32 +309,27 @@
             <div class="col-5">
                 <label for="agama" class="form-label">Agama</label>
                 <input type="text" class="form-control" id="agama" name="agama"
-                    value="{{ old('agama', session('selected_patient') == null ? '' : session('selected_patient')['agama']) }}"
-                    {{ session('selected_patient') == null ? '' : 'readonly' }}>
+                    value="{{ old('agama', session('selected_patient') == null ? '' : session('selected_patient')['agama']) }}">
             </div>
             <div class="offset-2 col-5">
                 <label for="status" class="form-label">Status</label>
                 <input type="text" class="form-control" id="status" name="status"
-                    value="{{ old('status', session('selected_patient') == null ? '' : session('selected_patient')['status']) }}"
-                    {{ session('selected_patient') == null ? '' : 'readonly' }}>
+                    value="{{ old('status', session('selected_patient') == null ? '' : session('selected_patient')['status']) }}">
             </div>
             <div class="col-5">
                 <label for="pendidikanterakhir" class="form-label">Pendidikan Terakhir</label>
                 <input type="text" class="form-control" id="pendidikanterakhir" name="pendidikanterakhir"
-                    value="{{ old('pendidikanterakhir', session('selected_patient') == null ? '' : session('selected_patient')['pendidikan']) }}"
-                    {{ session('selected_patient') == null ? '' : 'readonly' }}>
+                    value="{{ old('pendidikanterakhir', session('selected_patient') == null ? '' : session('selected_patient')['pendidikan']) }}">
             </div>
             <div class="offset-2 col-5">
                 <label for="pekerjaan" class="form-label">Pekerjaan</label>
                 <input type="text" class="form-control" id="pekerjaan" name="pekerjaan"
-                    value="{{ old('pekerjaan', session('selected_patient') == null ? '' : session('selected_patient')['pekerjaan']) }}"
-                    {{ session('selected_patient') == null ? '' : 'readonly' }}>
+                    value="{{ old('pekerjaan', session('selected_patient') == null ? '' : session('selected_patient')['pekerjaan']) }}">
             </div>
             <div class="col-12">
                 <label for="namaibupasien" class="form-label">Nama Ibu Pasien</label>
                 <input type="text" class="form-control" id="namaibupasien" name="namaibupasien"
-                    value="{{ old('namaibupasien', session('selected_patient') == null ? '' : session('selected_patient')['nama_ibu']) }}"
-                    {{ session('selected_patient') == null ? '' : 'readonly' }}>
+                    value="{{ old('namaibupasien', session('selected_patient') == null ? '' : session('selected_patient')['nama_ibu']) }}">
             </div>
         </div>
     </div>
@@ -373,20 +368,17 @@
                         <div class="col-12">
                             <label for="pangkatgolongan" class="form-label">Pangkat / Golongan</label>
                             <input type="text" class="form-control" id="pangkatgolongan" name="pangkatgolongan"
-                                value="{{ old('pangkatgolongan', session('selected_patient') == null ? '' : session('selected_patient')['pangkat_gol']) }}"
-                                {{ session('selected_patient') == null ? '' : 'readonly' }}>
+                                value="{{ old('pangkatgolongan', session('selected_patient') == null ? '' : session('selected_patient')['pangkat_gol']) }}">
                         </div>
                         <div class="col-12">
                             <label for="kesatuan" class="form-label">Kesatuan</label>
                             <input type="text" class="form-control" id="kesatuan" name="kesatuan"
-                                value="{{ old('kesatuan', session('selected_patient') == null ? '' : session('selected_patient')['kesatuan']) }}"
-                                {{ session('selected_patient') == null ? '' : 'readonly' }}>
+                                value="{{ old('kesatuan', session('selected_patient') == null ? '' : session('selected_patient')['kesatuan']) }}">
                         </div>
                         <div class="col-12">
                             <label for="nrp" class="form-label">NRP</label>
                             <input type="text" class="form-control" id="nrp" name="nrp"
-                                value="{{ old('nrp', session('selected_patient') == null ? '' : session('selected_patient')['nrp']) }}"
-                                {{ session('selected_patient') == null ? '' : 'readonly' }}>
+                                value="{{ old('nrp', session('selected_patient') == null ? '' : session('selected_patient')['nrp']) }}">
                         </div>
                     </div>
                 </div>
@@ -526,11 +518,11 @@
                         <div class="col-4">
                             <input type="text" class="form-control" id="kodepos" name="kodepos"
                                 value="{{ old('kodepos', session('selected_patient') == null ? '' : session('selected_patient')['kode_pos']) }}"
-                                placeholder="Kode Pos" {{ session('selected_patient') == null ? '' : 'readonly' }}>
+                                placeholder="Kode Pos">
                         </div>
                         <div class="col-12">
                             <textarea class="form-control @error('detailalamat') is-invalid @enderror" id="detailalamat" name="detailalamat"
-                                rows="3" placeholder="Detail Alamat" required {{ session('selected_patient') == null ? '' : 'readonly' }}>{{ old('detailalamat', session('selected_patient') == null ? '' : session('selected_patient')['alamat_detail']) }}</textarea>
+                                rows="3" placeholder="Detail Alamat" required>{{ old('detailalamat', session('selected_patient') == null ? '' : session('selected_patient')['alamat_detail']) }}</textarea>
                             <div class="invalid-feedback">Alamat harus diisi</div>
                         </div>
                     </div>
@@ -548,22 +540,22 @@
                     <div class="col-3">
                         <input type="text" class="form-control" id="nohp" name="nohp"
                             value="{{ old('nohp', session('selected_patient') == null ? '' : session('selected_patient')['no_hp']) }}"
-                            placeholder="No. HP" {{ session('selected_patient') == null ? '' : 'readonly' }}>
+                            placeholder="No. HP">
                     </div>
                     <div class="col-3">
                         <input type="text" class="form-control" id="notelp" name="notelp"
                             value="{{ old('notelp', session('selected_patient') == null ? '' : session('selected_patient')['no_telp']) }}"
-                            placeholder="No. Telp." {{ session('selected_patient') == null ? '' : 'readonly' }}>
+                            placeholder="No. Telp.">
                     </div>
                     <div class="col-3">
                         <input type="text" class="form-control" id="fax" name="fax"
                             value="{{ old('fax', session('selected_patient') == null ? '' : session('selected_patient')['fax']) }}"
-                            placeholder="Fax" {{ session('selected_patient') == null ? '' : 'readonly' }}>
+                            placeholder="Fax">
                     </div>
                     <div class="col-3">
                         <input type="text" class="form-control" id="email" name="email"
                             value="{{ old('email', session('selected_patient') == null ? '' : session('selected_patient')['email']) }}"
-                            placeholder="Email" {{ session('selected_patient') == null ? '' : 'readonly' }}>
+                            placeholder="Email">
                     </div>
                 </div>
             </div>
