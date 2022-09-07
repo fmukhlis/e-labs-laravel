@@ -362,7 +362,7 @@
                                         @php
                                             $idKecamatan = $test_data->pasien->kecamatan;
                                             if (old('kecamatan')) {
-                                                $idProvinsi = old('kecamatan');
+                                                $idKecamatan = old('kecamatan');
                                             }
                                             $villages = DB::table('t_kelurahan')
                                                 ->where('id', 'LIKE', $idKecamatan . '%')
